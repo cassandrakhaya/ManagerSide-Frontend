@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import CategoryList from '../components/start/CategoryList.jsx';
 import MenuEdit from '../components/start/MenuEdit.jsx';
+import Sidebar from '../components/start/Sidebar.jsx';
+import ProductDetails from '../components/start/ProductDetails.jsx';
 
 const MenuItems = [
     { id: 1, name: "Pancakes", category: "Breakfast", price: "€5.00", description: "Fluffy pancakes with syrup and butter." },
@@ -22,152 +24,106 @@ const MenuItems = [
     { id: 16, name: "Tiramisu", category: "Desserts", price: "€5.50", description: "Classic Italian dessert with coffee and mascarpone." },
 ];
 
-
 const categories = ["All", "Breakfast", "Lunch", "Dinner", "Drinks", "Desserts"];
 
 const MenuStartPage = () => {
-    const [selectedCategory, setSelectedCategory] = useState("All");
-    const [menuItems, setMenuItems] = useState(MenuItems);
+    const [selectedCategory, setSelectedCategory] = useState("Dinner");
     const [selectedItem, setSelectedItem] = useState(MenuItems[0]);
-
-    const addNewProduct = () => {
-        const newProduct = { id: menuItems.length + 1, name: "New Product", category: "", price: "", description: "" };
-        setMenuItems([...menuItems, newProduct]);
-        setSelectedItem(newProduct);
-    };
-    const filteredMenuItems = selectedCategory === "All" 
-        ? menuItems 
-        : menuItems.filter(item => item.category === selectedCategory);
-
-    
 
     return (
         <div className="min-h-screen flex bg-gray-100 p-6">
-            <div className="w-1/4 bg-white shadow-lg rounded-lg p-4">
-                <label className="block text-gray-700 font-semibold mb-2">Select Category</label>
-                <select 
-                    className="w-full p-2 border rounded mb-4" 
-                    value={selectedCategory} 
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                    {categories.map((category) => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
-                </select>
-
-                <h2 className="text-lg font-semibold mb-2">Products</h2>
-                <button className="bg-blue-500 text-white p-2 rounded w-full mb-4" onClick={addNewProduct}>+ New Product</button>
-                <ul>
-                    {filteredMenuItems.map((item) => (
-                        <li key={item.id} className="p-2 border-b cursor-pointer" onClick={() => setSelectedItem(item)}>
-                            <span className="font-semibold">{item.name}</span>
-                            <span className="block text-sm text-gray-500">{item.price}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            <div className="w-3/4 bg-white shadow-lg rounded-lg p-6 ml-4">
-                <h2 className="text-2xl font-bold mb-4">Product details</h2>
-                
-                <div className="flex">
-                    <div className="w-1/2">
-                        <label className="block text-gray-700">Name</label>
-                        <input className="w-full p-2 border rounded mb-4" value={selectedItem?.name || ""} readOnly />
-
-                        <label className="block text-gray-700">Price</label>
-                        <input className="w-full p-2 border rounded mb-4" value={selectedItem?.price || ""} readOnly />
-
-                        <label className="block text-gray-700">Category</label>
-                        <input className="w-full p-2 border rounded mb-4" value={selectedItem?.category || ""} readOnly />
-
-                        <label className="block text-gray-700">Product description</label>
-                        <textarea className="w-full p-2 border rounded" value={selectedItem?.description || ""} readOnly />
-                    </div>
-
-                    <div className="w-1/2 flex flex-col items-center">
-                        <img className="w-full h-40 object-cover rounded mb-4" src="https://via.placeholder.com/300" alt="Product" />
-                        <button className="bg-gray-300 text-gray-700 p-2 rounded">Change Image</button>
-                    </div>
-                </div>
-
-                <label className="block text-gray-700 mt-4">Status</label>
-                <select className="w-full p-2 border rounded">
-                    <option>Available</option>
-                    <option>Out of Stock</option>
-                </select>
-
-                <button className="bg-blue-500 text-white p-2 rounded w-full mt-4">Save</button>
-            </div>
+            <Sidebar 
+                menuItems={MenuItems} 
+                categories={categories}
+                selectedCategory={selectedCategory} 
+                setSelectedCategory={setSelectedCategory} 
+                setSelectedItem={setSelectedItem} 
+            />
+            <ProductDetails selectedItem={selectedItem} selectedCategory={selectedCategory} />
         </div>
     );
 };
 
 export default MenuStartPage;
 
-// const MenuItems = [
-//     { id: 1, name: "Pancakes", category: "Breakfast" },
-//     { id: 2, name: "Bacon and Eggs", category: "Breakfast" },
-//     { id: 3, name: "Grilled Cheese Sandwich", category: "Lunch" },
-//     { id: 4, name: "Spaghetti Bolognese", category: "Dinner" },
-//     { id: 5, name: "Coca Cola", category: "Drinks" },
-//     { id: 6, name: "Apple Pie", category: "Desserts" },
-// ]
-// const MenuStartPage = () => {
-//     const [selectedCategory, setSelectedCategory] = useState(null);
+// const categories = ["All", "Breakfast", "Lunch", "Dinner", "Drinks", "Desserts"];
 
-//     // Filter menu items based on the selected category
-//     const filteredMenuItems = selectedCategory
-//         ? MenuItems.filter(item => item.category === selectedCategory)
-//         : MenuItems;
+// const MenuStartPage = () => {
+//     const [selectedCategory, setSelectedCategory] = useState("All");
+//     const [menuItems, setMenuItems] = useState(MenuItems);
+//     const [selectedItem, setSelectedItem] = useState(MenuItems[0]);
+
+//     const filteredMenuItems = selectedCategory === "All" 
+//         ? menuItems 
+//         : menuItems.filter(item => item.category === selectedCategory);
+
+//     const addNewProduct = () => {
+//         const newProduct = { id: menuItems.length + 1, name: "New Product", category: "", price: "", description: "" };
+//         setMenuItems([...menuItems, newProduct]);
+//         setSelectedItem(newProduct);
+//     };
 
 //     return (
-//         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-//             {/* Page Container with a Card Layout */}
-//             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-2xl">
+//         <div className="min-h-screen flex bg-gray-100 p-6">
+//             <div className="w-1/4 bg-white shadow-lg rounded-lg p-4">
+//                 <label className="block text-gray-700 font-semibold mb-2">Select Category</label>
+//                 <select 
+//                     className="w-full p-2 border rounded mb-4" 
+//                     value={selectedCategory} 
+//                     onChange={(e) => setSelectedCategory(e.target.value)}
+//                 >
+//                     {categories.map((category) => (
+//                         <option key={category} value={category}>{category}</option>
+//                     ))}
+//                 </select>
+
+//                 <h2 className="text-lg font-semibold mb-2">Products</h2>
+//                 <button className="bg-blue-500 text-white p-2 rounded w-full mb-4" onClick={addNewProduct}>+ New Product</button>
+//                 <ul>
+//                     {filteredMenuItems.map((item) => (
+//                         <li key={item.id} className="p-2 border-b cursor-pointer" onClick={() => setSelectedItem(item)}>
+//                             <span className="font-semibold">{item.name}</span>
+//                             <span className="block text-sm text-gray-500">{item.price}</span>
+//                         </li>
+//                     ))}
+//                 </ul>
+//             </div>
+
+//             <div className="w-3/4 bg-white shadow-lg rounded-lg p-6 ml-4">
+//                 <h2 className="text-2xl font-bold mb-4">Product details</h2>
                 
-//                 {/* Page Title */}
-//                 <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-//                     Manager Menu Edit Page
-//                 </h1>
+//                 <div className="flex">
+//                     <div className="w-1/2">
+//                         <label className="block text-gray-700">Name</label>
+//                         <input className="w-full p-2 border rounded mb-4" value={selectedItem?.name || ""} readOnly />
 
-//                 {/* Category List - Right Below h1 */}
-//                 <div className="mb-4">
-//                     <CategoryList 
-//                         selectedCategory={selectedCategory} 
-//                         onCategorySelect={setSelectedCategory} 
-//                     />
+//                         <label className="block text-gray-700">Price</label>
+//                         <input className="w-full p-2 border rounded mb-4" value={selectedItem?.price || ""} readOnly />
+
+//                         <label className="block text-gray-700">Category</label>
+//                         <input className="w-full p-2 border rounded mb-4" value={selectedItem?.category || ""} readOnly />
+
+//                         <label className="block text-gray-700">Product description</label>
+//                         <textarea className="w-full p-2 border rounded" value={selectedItem?.description || ""} readOnly />
+//                     </div>
+
+//                     <div className="w-1/2 flex flex-col items-center">
+//                         <img className="w-full h-40 object-cover rounded mb-4" src="https://via.placeholder.com/300" alt="Product" />
+//                         <button className="bg-gray-300 text-gray-700 p-2 rounded">Change Image</button>
+//                     </div>
 //                 </div>
 
-//                 {/* Menu Edit - No Extra Space Between */}
-//                 <div className="mt-0">
-//                     <MenuEdit selectedCategory={selectedCategory} />
-//                 </div>
+//                 <label className="block text-gray-700 mt-4">Status</label>
+//                 <select className="w-full p-2 border rounded">
+//                     <option>Available</option>
+//                     <option>Out of Stock</option>
+//                 </select>
 
-//                 {/* Display Menu Items */}
-//                 <div className="mt-6">
-//                     <h2 className="text-xl font-semibold text-gray-700 mb-2">
-//                         {selectedCategory ? `${selectedCategory} Menu Items` : "All Menu Items"}
-//                     </h2>
-//                     <ul className="bg-gray-50 p-4 rounded-lg shadow-sm">
-//                         {filteredMenuItems.length > 0 ? (
-//                             filteredMenuItems.map((item) => (
-//                                 <li 
-//                                     key={item.id} 
-//                                     className="p-2 border-b last:border-none flex justify-between text-gray-700"
-//                                 >
-//                                     <span>{item.name}</span>
-//                                     <span className="text-sm text-gray-500">{item.category}</span>
-//                                 </li>
-//                             ))
-//                         ) : (
-//                             <li className="text-gray-500 text-center">No items in this category</li>
-//                         )}
-//                     </ul>
-//                 </div>
+//                 <button className="bg-blue-500 text-white p-2 rounded w-full mt-4">Save</button>
 //             </div>
 //         </div>
 //     );
 // };
 
 // export default MenuStartPage;
+
