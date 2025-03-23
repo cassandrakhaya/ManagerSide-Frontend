@@ -27,15 +27,22 @@ const categories = ["All", "Breakfast", "Lunch", "Dinner", "Drinks", "Desserts"]
 
 const MenuStartPage = () => {
     const [selectedCategory, setSelectedCategory] = useState("All");
+    const [menuItems, setMenuItems] = useState(MenuItems);
     const [selectedItem, setSelectedItem] = useState(MenuItems[0]);
 
+    const addNewProduct = () => {
+        const newProduct = { id: menuItems.length + 1, name: "New Product", category: "", price: "", description: "" };
+        setMenuItems([...menuItems, newProduct]);
+        setSelectedItem(newProduct);
+    };
     const filteredMenuItems = selectedCategory === "All" 
-        ? MenuItems 
-        : MenuItems.filter(item => item.category === selectedCategory);
+        ? menuItems 
+        : menuItems.filter(item => item.category === selectedCategory);
+
+    
 
     return (
         <div className="min-h-screen flex bg-gray-100 p-6">
-            {/* Sidebar */}
             <div className="w-1/4 bg-white shadow-lg rounded-lg p-4">
                 <label className="block text-gray-700 font-semibold mb-2">Select Category</label>
                 <select 
@@ -49,6 +56,7 @@ const MenuStartPage = () => {
                 </select>
 
                 <h2 className="text-lg font-semibold mb-2">Products</h2>
+                <button className="bg-blue-500 text-white p-2 rounded w-full mb-4" onClick={addNewProduct}>+ New Product</button>
                 <ul>
                     {filteredMenuItems.map((item) => (
                         <li key={item.id} className="p-2 border-b cursor-pointer" onClick={() => setSelectedItem(item)}>
@@ -59,7 +67,6 @@ const MenuStartPage = () => {
                 </ul>
             </div>
 
-            {/* Product Edit Form */}
             <div className="w-3/4 bg-white shadow-lg rounded-lg p-6 ml-4">
                 <h2 className="text-2xl font-bold mb-4">Product details</h2>
                 
