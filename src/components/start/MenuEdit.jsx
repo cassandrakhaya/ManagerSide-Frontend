@@ -9,7 +9,7 @@ const MenuForm = () => {
             setName("");
             setDescription("");
         } catch (error) {
-            console.error("Error creating post:", error);
+            console.error("Error creating meal: ", error);
         }
     };
 
