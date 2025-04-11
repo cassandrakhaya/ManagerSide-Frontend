@@ -3,6 +3,9 @@ import ImageUploader from '../start/AfbeeldingUpload';
 
 const ProductDetails = ({ selectedItem }) => {
     const [selectedCategory, setSelectedCategory] = useState("Lunch");
+    const [selectedName, setSelectedName] = useState("Name");
+    const [selectedPrice, setSelectedPrice] = useState("Price");
+    const [selectedDescription, setSelectedDescription] = useState("Description");
 
 
     useEffect(() => {
