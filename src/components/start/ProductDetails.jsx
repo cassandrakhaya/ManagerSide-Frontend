@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import ImageUploader from '../start/AfbeeldingUpload';
 
-const ProductDetails = ({ selectedItem, selectedCategory }) => {
+const ProductDetails = ({ selectedItem }) => {
+    const [selectedCategory, setSelectedCategory] = useState("Lunch");
+
+
+    useEffect(() => {
+        if (selectedItem?.category) {
+            setSelectedCategory(selectedItem.category);
+        }
+    }, [selectedItem]);
+
     return (
         <div className="w-3/4 bg-white shadow-lg rounded-lg p-6 ml-4">
             <h2 className="text-2xl font-bold mb-4">Product details</h2>
@@ -8,21 +18,29 @@ const ProductDetails = ({ selectedItem, selectedCategory }) => {
             <div className="flex">
                 <div className="w-1/2">
                     <label className="block text-gray-700">Name</label>
-                    <input className="w-full p-2 border rounded mb-4" value={selectedItem?.name || ""} readOnly />
+                    <input className="w-full p-2 border rounded mb-4" value={selectedItem?.name || ""}  />
 
                     <label className="block text-gray-700">Price</label>
-                    <input className="w-full p-2 border rounded mb-4" value={selectedItem?.price || ""} readOnly />
+                    <input className="w-full p-2 border rounded mb-4" value={selectedItem?.price || ""}  />
 
                     <label className="block text-gray-700">Category</label>
-                    <input className="w-full p-2 border rounded mb-4" value={selectedCategory} readOnly />
+                    <select 
+                        className="w-full p-2 border rounded" 
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Drinks">Drinks</option>
+                        <option value="Desserts">Desserts</option>
+                    </select>
 
-                    <label className="block text-gray-700">Product description</label>
-                    <textarea className="w-full p-2 border rounded" value={selectedItem?.description || ""} readOnly />
+                    <label className="block text-gray-700 mt-4">Product description</label>
+                    <textarea className="w-full p-2 border rounded" value={selectedItem?.description || ""}  />
                 </div>
 
                 <div className="w-1/2 flex flex-col items-center">
-                    <img className="w-full h-40 object-cover rounded mb-4" src="https://via.placeholder.com/300" alt="Product" />
-                    <button className="bg-gray-300 text-gray-700 p-2 rounded">Change Image</button>
+                    <ImageUploader />
                 </div>
             </div>
 
