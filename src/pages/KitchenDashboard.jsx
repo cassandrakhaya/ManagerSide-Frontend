@@ -59,7 +59,7 @@ const KitchenDashboard = () => {
   }, [orders]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-[#F5F5F5]"> {/* Lichtgrijze achtergrond voor de pagina */}
       <div className="w-3/4 p-6 flex flex-wrap">
         <h1 className="text-3xl font-bold mb-6 w-full">Keukenoverzicht</h1>
         {orders.map((order, index) => (
@@ -70,7 +70,7 @@ const KitchenDashboard = () => {
       </div>
 
       {/* Zijbalk met wachtende gerechten */}
-      <div className="w-1/4 bg-gray-100 p-6 flex flex-col">
+      <div className="w-1/4 bg-white p-6 flex flex-col"> {/* Wit voor de zijbalk */}
         <h2 className="text-xl font-bold mb-4">Wachtende Gerechten</h2>
         <ul className="flex-grow">
           {Object.entries(waitingItems).map(([itemName, quantity]) => (

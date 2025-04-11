@@ -15,27 +15,14 @@ const OrderCard = ({ order }) => {
 
   const allDone = items.every(item => item.status === "done");
 
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case "waiting":
-        return "⏳ Wacht";
-      case "inProgress":
-        return "🔥 Bezig";
-      case "done":
-        return "✅ Klaar";
-      default:
-        return "";
-    }
-  };
-
   const getStatusClass = (status) => {
     switch (status) {
       case "waiting":
-        return "text-red-600 font-semibold";
+        return "border-red-500"; // Rood voor 'wacht'
       case "inProgress":
-        return "text-yellow-600 font-semibold";
+        return "border-yellow-400"; // Oranje voor 'bezig'
       case "done":
-        return "text-green-600 font-semibold";
+        return "border-green-500"; // Groen voor 'klaar'
       default:
         return "";
     }
@@ -50,37 +37,31 @@ const OrderCard = ({ order }) => {
 
       <ul className="space-y-3 flex-grow">
         {items.map((item, index) => (
-          <li key={index} className="bg-gray-100 p-3 rounded-lg">
+          <li
+            key={index}
+            className={`p-3 rounded-lg border-2 ${getStatusClass(item.status)}`}
+          >
             <div className="flex justify-between items-center">
               <div>
                 <span className="font-medium">
                   {item.quantity}x {item.name}
                 </span>
-                <span className={`ml-3 ${getStatusClass(item.status)}`}>
-                  {getStatusLabel(item.status)}
-                </span>
               </div>
               <div className="space-x-1">
                 <button
-                  className={`px-2 py-1 rounded ${
-                    item.status === "waiting" ? "bg-red-500 text-white" : "bg-gray-200"
-                  }`}
+                  className={`px-4 py-2 rounded ${item.status === "waiting" ? "bg-red-500 text-white" : "bg-gray-200"}`}
                   onClick={() => updateStatus(index, "waiting")}
                 >
                   Wacht
                 </button>
                 <button
-                  className={`px-2 py-1 rounded ${
-                    item.status === "inProgress" ? "bg-yellow-400 text-white" : "bg-gray-200"
-                  }`}
+                  className={`px-4 py-2 rounded ${item.status === "inProgress" ? "bg-yellow-400 text-white" : "bg-gray-200"}`}
                   onClick={() => updateStatus(index, "inProgress")}
                 >
                   Bezig
                 </button>
                 <button
-                  className={`px-2 py-1 rounded ${
-                    item.status === "done" ? "bg-green-500 text-white" : "bg-gray-200"
-                  }`}
+                  className={`px-4 py-2 rounded ${item.status === "done" ? "bg-green-500 text-white" : "bg-gray-200"}`}
                   onClick={() => updateStatus(index, "done")}
                 >
                   Klaar
@@ -93,9 +74,7 @@ const OrderCard = ({ order }) => {
 
       <div className="mt-4 text-right">
         <button
-          className={`w-full px-4 py-2 rounded text-white ${
-            allDone ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full px-4 py-2 rounded text-white ${allDone ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"}`}
           disabled={!allDone}
         >
           Bestelling is klaar
