@@ -21,8 +21,12 @@ const ProductDetails = ({ selectedItem }) => {
             <div className="flex">
                 <div className="w-1/2">
                     <label className="block text-gray-700">Name</label>
-                    <input className="w-full p-2 border rounded mb-4" value={selectedItem?.name || ""}  />
-
+                    <input
+                        className="w-full p-2 border rounded"
+                        value = {selectedName}
+                        onChange={(e) => setSelectedName(e.target.value)}
+                    />
+                    
                     <label className="block text-gray-700">Price</label>
                     <input className="w-full p-2 border rounded mb-4" value={selectedItem?.price || ""}  />
 
