@@ -23,9 +23,8 @@ const App = () => {
 
       {/* Sub-toolbar */}
       <div className="sub-toolbar">
-        <button className="btn-light">All Categories</button>
+        {/* <button className="btn-light">All Categories</button> */}
         <button className="btn-light">Edit Categories</button>
-        <button className="btn-new-product">New Product <span>+</span></button>
       </div>
 
       {/* Routes */}

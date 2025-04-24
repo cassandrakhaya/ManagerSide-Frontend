@@ -1,41 +1,33 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 
-const ImageUploader = () => {
-  const [imagePreview, setImagePreview] = useState("");
-  const fileInputRef = useRef(null);
-
-  const uploadImage = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const previewURL = URL.createObjectURL(file);
-      setImagePreview(previewURL);
-    }
-  };
-
+const AfbeeldingUpload = ({ selectedItem, setSelectedItem, fileInputRef, handleImageChange }) => {
   return (
-    <div className="w-1/2 flex flex-col items-center">
-      <img
-        className="w-full h-40 object-cover rounded mb-4"
-        src={imagePreview}
-        alt="Product Preview"
-      />
-      <button
-        className="bg-gray-300 text-gray-700 p-2 rounded"
-        onClick={() => fileInputRef.current.click()}
-      >
-        Change Image
-      </button>
-
-      {/* Hidden file input */}
+    <div className="ml-6">
+      <div className="w-48 h-28 bg-gray-100 rounded overflow-hidden mb-2">
+        {selectedItem.imageUrl && (
+          <img
+            src={selectedItem.imageUrl}
+            alt=""
+            className="object-cover w-full h-full"
+          />
+        )}
+      </div>
       <input
         type="file"
         accept="image/*"
         ref={fileInputRef}
-        onChange={uploadImage}
-        style={{ display: 'none' }}
+        onChange={handleImageChange}
+        className="hidden"
       />
+      <button
+        type="button"
+        className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition active:scale-95"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        Afbeelding Aanpassen
+      </button>
     </div>
   );
 };
 
-export default ImageUploader;
+export default AfbeeldingUpload;
