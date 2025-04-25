@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, setMenuItems }) => {
   const allergien = ['Gluten', 'Lactose', 'Noten', 'Eieren', 'Soja'];
 
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [selectedAlergie, setSelectedAlergie] = useState(allergien[0]);
+  const [selectedCategory, setSelectedCategory] = useState('Categorie selecteren');
+  const [selectedAlergie, setSelectedAlergie] = useState('Allergie selecteren');
 
   const updateSelectedItem = (updatedFields) => {
     const updatedItem = { ...selectedItem, ...updatedFields };
@@ -16,10 +16,10 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
     setMenuItems(updatedMenuItems);
   };
 
-  const addCategoryToProduct = () => {
+  const addCategoryToProduct = (category) => {
     const existing = selectedItem.categories || [];
-    if (!existing.includes(selectedCategory)) {
-      updateSelectedItem({ categories: [...existing, selectedCategory] });
+    if (!existing.includes(category)) {
+      updateSelectedItem({ categories: [...existing, category] });
     }
   };
 
@@ -28,10 +28,10 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
     updateSelectedItem({ categories: updated });
   };
 
-  const addAlergieToProduct = () => {
+  const addAlergieToProduct = (allergie) => {
     const existing = selectedItem.allergies || [];
-    if (!existing.includes(selectedAlergie)) {
-      updateSelectedItem({ allergies: [...existing, selectedAlergie] });
+    if (!existing.includes(allergie)) {
+      updateSelectedItem({ allergies: [...existing, allergie] });
     }
   };
 
@@ -72,19 +72,19 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
           <select
             className="w-full border px-2 py-2 rounded"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              if (e.target.value !== 'Categorie selecteren') {
+                addCategoryToProduct(e.target.value);
+              }
+            }}
           >
+            <option value="Categorie selecteren" disabled>Categorie selecteren</option>
             {categories.filter(c => c !== "All").map(c => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
         </div>
-        <button
-          onClick={addCategoryToProduct}
-          className="mt-6 bg-blue-100 px-3 py-1 rounded text-xl font-bold hover:bg-blue-200 active:scale-95 transition"
-        >
-          +
-        </button>
       </div>
 
       {/* Categorieën weergeven */}
@@ -117,19 +117,19 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
           <select
             className="w-full border px-2 py-2 rounded"
             value={selectedAlergie}
-            onChange={(e) => setSelectedAlergie(e.target.value)}
+            onChange={(e) => {
+              setSelectedAlergie(e.target.value);
+              if (e.target.value !== 'Allergie selecteren') {
+                addAlergieToProduct(e.target.value);
+              }
+            }}
           >
+            <option value="Allergie selecteren" disabled>Allergie selecteren</option>
             {allergien.map(c => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
         </div>
-        <button
-          onClick={addAlergieToProduct}
-          className="mt-6 bg-blue-100 px-3 py-1 rounded text-xl font-bold hover:bg-blue-200 active:scale-95 transition"
-        >
-          +
-        </button>
       </div>
 
       {/* Allergieën weergeven */}

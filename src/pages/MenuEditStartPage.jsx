@@ -22,7 +22,7 @@ const initialMenuItems = [
   { id: 16, name: "Tiramisu", category: "Toetjes", price: "5.50", description: "Classic Italian dessert with coffee and mascarpone.", status: "Available", imageUrl: "" },
 ];
 
-const categories = ["Alle Categorien", "Lunch", "Avondeten", "Drankjes", "Toetjes"];
+const categories = ["Lunch", "Avondeten", "Drankjes", "Toetjes"];
 
 const MenuEditStartPage = () => {
   const [menuItems, setMenuItems] = useState(initialMenuItems);
