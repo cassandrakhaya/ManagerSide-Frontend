@@ -1,0 +1,112 @@
+/* Algemene stijl voor de kaart */
+.order-card {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .order-card-header h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .order-card-header span {
+    color: gray;
+  }
+  
+  .order-items {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .order-item {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border-width: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  
+  .order-item.waiting {
+    border-color: #f56565; /* Rood voor 'wacht' */
+  }
+  
+  .order-item.inProgress {
+    border-color: #f6ad55; /* Oranje voor 'bezig' */
+  }
+  
+  .order-item.done {
+    border-color: #48bb78; /* Groen voor 'klaar' */
+  }
+  
+  .item-name {
+    font-weight: medium;
+  }
+  
+  .order-item-actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .status-button {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border-width: 2px;
+    font-weight: 600;
+    background-color: #e2e8f0; /* Neutrale kleur voor niet-actieve knoppen */
+    color: #2d3748; /* Donkergrijs voor de tekst */
+  }
+  
+  .status-button.active {
+    color: white;
+  }
+  
+  .status-button.waiting.active {
+    background-color: #f56565; /* Rood voor 'wacht' */
+  }
+  
+  .status-button.inProgress.active {
+    background-color: #f6ad55; /* Oranje voor 'bezig' */
+  }
+  
+  .status-button.done.active {
+    background-color: #48bb78; /* Groen voor 'klaar' */
+  }
+  
+  .order-footer {
+    margin-top: 1rem;
+    text-align: right;
+  }
+  
+  .complete-order-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    color: white;
+    background-color: #38a169; /* Groen voor 'Bestelling is klaar' */
+  }
+  
+  .complete-order-btn.disabled {
+    background-color: #edf2f7;
+    cursor: not-allowed;
+  }
+  
+  .complete-order-btn.done:hover {
+    background-color: #2f855a;
+  }
+  
