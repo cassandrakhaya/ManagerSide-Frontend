@@ -1,5 +1,6 @@
 import React from 'react';
-import './Sidebar.css'
+import './Sidebar.css';
+
 const Sidebar = ({ menuItems, categories, selectedCategory, setSelectedCategory, setSelectedItem }) => {
   return (
     <div className="w-1/4 bg-white shadow-lg rounded-lg p-4">

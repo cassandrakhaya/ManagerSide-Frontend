@@ -1,7 +1,7 @@
-// src/pages/MenuEditStartPage.jsx
 import React, { useState, useRef } from 'react';
 import ProductDetails from '../components/start/ProductDetails';
 import AfbeeldingUpload from '../components/start/AfbeeldingUpload';
+import Sidebar from '../components/start/Sidebar';
 
 const initialMenuItems = [
   { id: 1, name: "Pannenkoeken", category: "Lunch", price: "€5.00", description: "Fluffy pancakes with syrup and butter.", status: "Available", imageUrl: "" },
@@ -13,7 +13,7 @@ const initialMenuItems = [
   { id: 7, name: "Spaghetti Bolognese", category: "Avondeten", price: "€8.00", description: "Classic pasta with rich meat sauce.", status: "Available", imageUrl: "" },
   { id: 8, name: "Salade Niçoise", category: "Avondeten", price: "€7.75", description: "French salad with tuna, eggs, and olives.", status: "Available", imageUrl: "" },
   { id: 9, name: "Vegan Boeuf Bourguignon", category: "Avondeten", price: "€8.00", description: "A rich French stew with red wine and vegetables.", status: "Available", imageUrl: "" },
-  { id: 10, name: "Steak with Friet", category: "Avondeten", price: "€12.00", description: "Juicy grilled steak with crispy fries.", status: "Available", imageUrl: "" },
+  { id: 10, name: "Steak met Friet", category: "Avondeten", price: "€12.00", description: "Juicy grilled steak with crispy fries.", status: "Available", imageUrl: "" },
   { id: 11, name: "Coca Cola", category: "Drankjes", price: "€2.50", description: "Classic refreshing soft drink.", status: "Available", imageUrl: "" },
   { id: 12, name: "Vers Sinaasappelsap", category: "Drankjes", price: "€3.00", description: "Freshly squeezed orange juice.", status: "Available", imageUrl: "" },
   { id: 13, name: "Latte", category: "Drankjes", price: "€3.50", description: "Smooth espresso with steamed milk.", status: "Available", imageUrl: "" },
@@ -30,10 +30,9 @@ const MenuEditStartPage = () => {
   const [selectedItem, setSelectedItem] = useState(initialMenuItems[0]);
   const fileInputRef = useRef(null);
 
-  const filteredMenuItems =
-    selectedCategory === "All"
-      ? menuItems
-      : menuItems.filter(item => item.category === selectedCategory);
+  const filteredMenuItems = selectedCategory === "All" 
+    ? menuItems 
+    : menuItems.filter(item => item.category === selectedCategory);
 
   const addNewProduct = () => {
     const newProduct = {
@@ -50,8 +49,17 @@ const MenuEditStartPage = () => {
   };
 
   const onSave = updatedItem => {
-    setMenuItems(menuItems.map(item => item.id === updatedItem.id ? updatedItem : item));
-    setSelectedItem(updatedItem);
+    const updatedMenuItems = menuItems.map(item =>
+      item.id === updatedItem.id ? updatedItem : item
+    );
+    setMenuItems(updatedMenuItems);  // Update menuItems
+
+    setSelectedItem(updatedItem);  // Set the selected item
+    
+    // Update selected category in the sidebar if needed
+    if (selectedCategory !== "All" && selectedCategory !== updatedItem.category) {
+      setSelectedCategory(updatedItem.category); // Update selected category
+    }
   };
 
   const handleImageChange = e => {
@@ -67,47 +75,13 @@ const MenuEditStartPage = () => {
   return (
     <div className="min-h-screen flex bg-gray-100 p-6">
       {/* Sidebar */}
-      <div className="w-1/4 bg-white shadow rounded-lg p-4">
-        <label className="block text-gray-700 font-semibold mb-2">
-          Categorie Selecteren
-        </label>
-        <select
-          className="w-full p-2 border rounded mb-4 text-sm"
-          value={selectedCategory}
-          onChange={e => setSelectedCategory(e.target.value)}
-        >
-          {categories.map(cat => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-
-        <h2 className="text-lg font-semibold mb-2">Producten</h2>
-        <button
-          className="bg-blue-500 text-white p-2 rounded w-full mb-4 text-sm transition-transform transform active:scale-95"
-          onClick={addNewProduct}
-        >
-          + Nieuwe Product
-        </button>
-
-        <ul className="divide-y">
-          {filteredMenuItems.map(item => (
-            <li
-              key={item.id}
-              className={`p-2 cursor-pointer transition hover:bg-gray-100 ${
-                selectedItem.id === item.id ? "bg-gray-50" : ""
-              }`}
-              onClick={() => setSelectedItem(item)}
-            >
-              <div className="font-semibold">
-                {item.name || "New Product"}
-              </div>
-              <div className="text-xs text-gray-500">{item.price}</div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Sidebar 
+        menuItems={menuItems} 
+        categories={categories} 
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory} 
+        setSelectedItem={setSelectedItem}
+      />
 
       {/* Product Details */}
       <div className="w-3/4 bg-white border rounded-lg p-6 ml-4">
