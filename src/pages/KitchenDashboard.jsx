@@ -108,7 +108,6 @@ const KitchenDashboard = () => {
   useEffect(() => {
     const itemsCount = {};
 
-    // Tel het aantal gerechten in de wachtstatus
     orders.forEach(order => {
       order.items.forEach(item => {
         if (item.status === "waiting") {
@@ -121,26 +120,34 @@ const KitchenDashboard = () => {
   }, [orders]);
 
   return (
-    <div className="flex h-screen bg-[#F5F5F5]"> {/* Lichtgrijze achtergrond voor de pagina */}
-      <div className="w-3/4 p-6 flex flex-wrap">
+    <div className="flex h-screen bg-[#F5F5F5]">
+      <div className="w-3/4 p-6 flex flex-wrap overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6 w-full">Keukenoverzicht</h1>
         {orders.map((order, index) => (
           <div key={index} className="w-1/2 p-2">
-            <OrderCard order={order} />
+            <OrderCard
+              order={order}
+              onUpdate={(updatedOrder) => {
+                setOrders(prevOrders =>
+                  prevOrders.map((o, i) => (i === index ? updatedOrder : o))
+                );
+              }}
+            />
           </div>
         ))}
       </div>
 
-      {/* Zijbalk met wachtende gerechten */}
-      <div className="w-1/4 bg-white p-6 flex flex-col"> {/* Wit voor de zijbalk */}
+      <div className="w-1/4 bg-white p-6 flex flex-col">
         <h2 className="text-xl font-bold mb-4">Wachtende Gerechten</h2>
         <ul className="flex-grow">
-          {Object.entries(waitingItems).map(([itemName, quantity]) => (
-            <li key={itemName} className="flex justify-between mb-2">
-              <span>{itemName}</span>
-              <span className="font-semibold">{quantity}x</span>
-            </li>
-          ))}
+        {Object.entries(waitingItems)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([itemName, quantity]) => (
+          <li key={itemName} className="flex justify-between mb-2">
+            <span>{itemName}</span>
+            <span className="font-semibold">{quantity}x</span>
+          </li>
+        ))}
         </ul>
       </div>
     </div>

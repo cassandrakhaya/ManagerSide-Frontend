@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 
-const OrderCard = ({ order }) => {
-  const [items, setItems] = useState(
-    order.items.map(item => ({ ...item, status: "waiting" }))
-  );
+const OrderCard = ({ order, onUpdate }) => {
+  const [items, setItems] = useState(order.items);
 
   const updateStatus = (index, newStatus) => {
-    setItems(prev => {
-      const updated = [...prev];
-      updated[index].status = newStatus;
-      return updated;
-    });
+    const updated = [...items];
+    updated[index].status = newStatus;
+    setItems(updated);
+    onUpdate({ ...order, items: updated }); // Stuur nieuwe status naar parent
   };
 
   const allDone = items.every(item => item.status === "done");
@@ -18,11 +15,11 @@ const OrderCard = ({ order }) => {
   const getStatusClass = (status) => {
     switch (status) {
       case "waiting":
-        return "border-red-500"; // Rood voor 'wacht'
+        return "border-red-500";
       case "inProgress":
-        return "border-yellow-400"; // Oranje voor 'bezig'
+        return "border-yellow-400";
       case "done":
-        return "border-green-500"; // Groen voor 'klaar'
+        return "border-green-500";
       default:
         return "";
     }
