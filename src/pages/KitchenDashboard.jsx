@@ -1,109 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import OrderCard from "../components/OrderCard";
-
-// Dummy data (vervang dit met je backend data in de toekomst)
-const dummyOrders = [
-  {
-    table: 1,
-    time: "13:12",
-    items: [
-      { name: "Pizza Funghi", quantity: 2, status: "waiting" },
-      { name: "Lasagne", quantity: 1, status: "waiting" },
-      { name: "Salade Caprese", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 4,
-    time: "13:25",
-    items: [
-      { name: "Burger", quantity: 3, status: "waiting" },
-      { name: "Frietjes", quantity: 2, status: "waiting" }
-    ]
-  },
-  {
-    table: 9,
-    time: "13:32",
-    items: [
-      { name: "Salade Caprese", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 11,
-    time: "13:35",
-    items: [
-      { name: "Burger", quantity: 2, status: "waiting" }
-    ]
-  },
-  {
-    table: 2,
-    time: "13:52",
-    items: [
-      { name: "Lasagne", quantity: 1, status: "waiting" },
-      { name: "Salade Caprese", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 12,
-    time: "14:02",
-    items: [
-      { name: "Burger", quantity: 1, status: "waiting" },
-      { name: "Frietjes", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 3,
-    time: "14:03",
-    items: [
-      { name: "Pizza Funghi", quantity: 1, status: "waiting" },
-      { name: "Salade Caprese", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 5,
-    time: "14:05",
-    items: [
-      { name: "Burger", quantity: 2, status: "waiting" },
-      { name: "Frietjes", quantity: 2, status: "waiting" }
-    ]
-  },
-  {
-    table: 6,
-    time: "14:08",
-    items: [
-      { name: "Pizza Funghi", quantity: 1, status: "waiting" },
-      { name: "Lasagne", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 4,
-    time: "14:10",
-    items: [
-      { name: "Burger", quantity: 3, status: "waiting" },
-      { name: "Frietjes", quantity: 2, status: "waiting" }
-    ]
-  },
-  {
-    table: 1,
-    time: "14:12",
-    items: [
-      { name: "Pizza Funghi", quantity: 2, status: "waiting" },
-      { name: "Lasagne", quantity: 1, status: "waiting" },
-      { name: "Salade Caprese", quantity: 1, status: "waiting" }
-    ]
-  },
-  {
-    table: 4,
-    time: "14:14",
-    items: [
-      { name: "Burger", quantity: 5, status: "waiting" },
-      { name: "Frietjes", quantity: 3, status: "waiting" }
-    ]
-  }
-];
+import axios from 'axios';
 
 const KitchenDashboard = () => {
-  const [orders, setOrders] = useState(dummyOrders);
+  const [orders, setOrders] = useState([]);
   const [waitingItems, setWaitingItems] = useState({});
+  const [dishes, setDishes] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [ordersRes, dishesRes] = await Promise.all([
+          axios.get("http://localhost:5068/api/order"),
+          axios.get("http://localhost:5068/api/dish")
+        ]);
+
+        const dishMap = {};
+        dishesRes.data.forEach(d => {
+          dishMap[d.dishID] = d.name;
+        });
+        setDishes(dishMap);
+
+        const transformedOrders = ordersRes.data.map(order => ({
+          table: order.tableId,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          items: order.orderedItems.map(item => ({
+            name: dishMap[item.dishId] || `Dish ${item.dishId}`,
+            quantity: item.quantity,
+            status: "waiting"
+          }))
+        }));
+
+        setOrders(transformedOrders);
+      } catch (error) {
+        console.error("Fout bij ophalen van data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const itemsCount = {};

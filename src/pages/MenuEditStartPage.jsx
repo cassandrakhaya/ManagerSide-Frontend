@@ -4,9 +4,9 @@ import ProductDetails from '../components/start/ProductDetails';
 import AfbeeldingUpload from '../components/start/AfbeeldingUpload';
 
 const initialMenuItems = [
-  { id: 1, name: "Pancakes", category: "Breakfast", price: "€5.00", description: "Fluffy pancakes with syrup and butter.", status: "Available", imageUrl: "" },
-  { id: 2, name: "Bacon and Eggs", category: "Breakfast", price: "€6.50", description: "Crispy bacon with scrambled eggs.", status: "Available", imageUrl: "" },
-  { id: 3, name: "Oatmeal with Fruits", category: "Breakfast", price: "€4.50", description: "Healthy oatmeal with fresh fruits and honey.", status: "Available", imageUrl: "" },
+  { id: 1, name: "Pancakes", category: "Lunch", price: "€5.00", description: "Fluffy pancakes with syrup and butter.", status: "Available", imageUrl: "" },
+  { id: 2, name: "Bacon and Eggs", category: "Lunch", price: "€6.50", description: "Crispy bacon with scrambled eggs.", status: "Available", imageUrl: "" },
+  { id: 3, name: "Oatmeal with Fruits", category: "Lunch", price: "€4.50", description: "Healthy oatmeal with fresh fruits and honey.", status: "Available", imageUrl: "" },
   { id: 4, name: "Grilled Cheese Sandwich", category: "Lunch", price: "€4.75", description: "Toasted sandwich with melted cheese.", status: "Available", imageUrl: "" },
   { id: 5, name: "Caesar Salad", category: "Lunch", price: "€6.50", description: "Crisp romaine lettuce with Caesar dressing and croutons.", status: "Available", imageUrl: "" },
   { id: 6, name: "Club Sandwich", category: "Lunch", price: "€7.00", description: "Triple-layered sandwich with turkey, bacon, and lettuce.", status: "Available", imageUrl: "" },
@@ -22,7 +22,7 @@ const initialMenuItems = [
   { id: 16, name: "Tiramisu", category: "Desserts", price: "€5.50", description: "Classic Italian dessert with coffee and mascarpone.", status: "Available", imageUrl: "" },
 ];
 
-const categories = ["All", "Breakfast", "Lunch", "Dinner", "Drinks", "Desserts"];
+const categories = ["All", "Lunch", "Dinner", "Drinks", "Desserts"];
 
 const MenuEditStartPage = () => {
   const [menuItems, setMenuItems] = useState(initialMenuItems);
@@ -69,7 +69,7 @@ const MenuEditStartPage = () => {
       {/* Sidebar */}
       <div className="w-1/4 bg-white shadow rounded-lg p-4">
         <label className="block text-gray-700 font-semibold mb-2">
-          Select Category
+          Selecteer Categorie
         </label>
         <select
           className="w-full p-2 border rounded mb-4 text-sm"
@@ -83,12 +83,12 @@ const MenuEditStartPage = () => {
           ))}
         </select>
 
-        <h2 className="text-lg font-semibold mb-2">Products</h2>
+        <h2 className="text-lg font-semibold mb-2">Producten</h2>
         <button
           className="bg-blue-500 text-white p-2 rounded w-full mb-4 text-sm transition-transform transform active:scale-95"
           onClick={addNewProduct}
         >
-          + New Product
+          + Nieuw Product
         </button>
 
         <ul className="divide-y">
@@ -137,8 +137,8 @@ const MenuEditStartPage = () => {
               }
               className="p-2 border border-gray-300 rounded text-sm"
             >
-              <option>Available</option>
-              <option>Unavailable</option>
+              <option>Beschikbaar</option>
+              <option>Onbeschikbaar</option>
             </select>
           </div>
 
@@ -146,7 +146,7 @@ const MenuEditStartPage = () => {
             onClick={() => onSave(selectedItem)}
             className="bg-blue-400 text-white px-6 py-2 rounded hover:bg-blue-500 transition active:scale-95 text-sm"
           >
-            Save
+            Opslaan
           </button>
         </div>
       </div>

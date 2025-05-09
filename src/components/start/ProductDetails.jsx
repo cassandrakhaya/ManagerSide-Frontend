@@ -13,7 +13,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories }) => {
   return (
     <div className="flex-1 space-y-4">
       <div>
-        <label className="block text-sm mb-1">Name</label>
+        <label className="block text-sm mb-1">Naam</label>
         <input
           type="text"
           value={selectedItem.name}
@@ -68,7 +68,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories }) => {
       {/* Display added categories */}
       {selectedItem.categories?.length > 0 && (
         <div>
-          <label className="block text-sm mb-1">Added Categories</label>
+          <label className="block text-sm mb-1">Toegevoegde Categorieën</label>
           <div className="flex flex-wrap gap-2">
             {selectedItem.categories.map((cat, i) => (
               <span
@@ -83,7 +83,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories }) => {
       )}
 
       <div>
-        <label className="block text-sm mb-1">Product description</label>
+        <label className="block text-sm mb-1">Product beschrijving</label>
         <textarea
           rows={4}
           value={selectedItem.description}

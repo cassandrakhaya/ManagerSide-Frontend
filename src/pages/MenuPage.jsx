@@ -29,7 +29,7 @@ const MenuForm = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
             />
-            <button onClick={handleMenu}>Save</button>
+            <button onClick={handleMenu}>Opslaan</button>
         </div>
     );
 };
