@@ -5,41 +5,51 @@ import axios from 'axios';
 const KitchenDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [waitingItems, setWaitingItems] = useState({});
-  const [dishes, setDishes] = useState({});
+  const [data, setData] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [ordersRes, dishesRes] = await Promise.all([
-          axios.get("http://localhost:5068/api/order"),
-          axios.get("http://localhost:5068/api/dish")
-        ]);
-
-        const dishMap = {};
-        dishesRes.data.forEach(d => {
-          dishMap[d.dishID] = d.name;
-        });
-        setDishes(dishMap);
-
-        const transformedOrders = ordersRes.data.map(order => ({
-          table: order.tableId,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          items: order.orderedItems.map(item => ({
-            name: dishMap[item.dishId] || `Dish ${item.dishId}`,
-            quantity: item.quantity,
-            status: "waiting"
-          }))
-        }));
-
-        setOrders(transformedOrders);
-      } catch (error) {
-        console.error("Fout bij ophalen van data:", error);
-      }
-    };
-
-    fetchData();
+    getData();
   }, []);
 
+  const getData = () => {
+    axios.get("/api/Order/all-ordered-items")
+        .then((result) => {
+          const grouped = groupByOrderId(result.data);
+          setOrders(grouped);
+          console.log("Data responds: ", result.data);
+        })
+        .catch((error) => {
+          console.error("Error met ophalen van data:", error);
+          toast.error("Data ophalen mislukt!");
+        });
+  };
+
+
+  const groupByOrderId = (items) => {
+    const grouped = {};
+
+    items.forEach(item => {
+      const orderId = item.orderId;
+      if (!grouped[orderId]) {
+        grouped[orderId] = {
+          orderId,
+          items: []
+        };
+      }
+
+      grouped[orderId].items.push({
+        name: item.dishName,
+        quantity: item.quantity,
+        status: item.status || "waiting",
+      });
+    });
+
+    // Convert object naar array
+    return Object.values(grouped);
+  };
+
+  
+  
   useEffect(() => {
     const itemsCount = {};
 

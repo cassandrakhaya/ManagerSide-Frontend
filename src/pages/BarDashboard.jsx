@@ -16,7 +16,7 @@ const dummyOrders = [
       table: 4,
       time: "13:25",
       items: [
-        { name: "Heineken", quantity: 3, status: "waiting" },
+        { name: "Bavaria", quantity: 3, status: "waiting" },
         { name: "Tonic", quantity: 2, status: "waiting" }
       ]
     },
@@ -46,7 +46,7 @@ const dummyOrders = [
       table: 12,
       time: "14:02",
       items: [
-        { name: "Heineken", quantity: 1, status: "waiting" },
+        { name: "Bavaria", quantity: 1, status: "waiting" },
         { name: "Tonic", quantity: 1, status: "waiting" }
       ]
     },
@@ -78,7 +78,7 @@ const dummyOrders = [
       table: 4,
       time: "14:10",
       items: [
-        { name: "Heineken", quantity: 3, status: "waiting" },
+        { name: "Bavaria", quantity: 3, status: "waiting" },
         { name: "Tonic", quantity: 2, status: "waiting" }
       ]
     },
@@ -95,7 +95,7 @@ const dummyOrders = [
       table: 4,
       time: "14:14",
       items: [
-        { name: "Heineken", quantity: 5, status: "waiting" },
+        { name: "Bavaria", quantity: 5, status: "waiting" },
         { name: "Tonic", quantity: 3, status: "waiting" }
       ]
     }
