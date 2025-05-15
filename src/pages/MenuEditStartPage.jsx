@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import ProductDetails from '../components/start/ProductDetails';
 import AfbeeldingUpload from '../components/start/AfbeeldingUpload';
 import Sidebar from '../components/start/Sidebar';
+import CategoryManager from '../components/start/CategoryManager';
 
 const initialMenuItems = [
   { id: 1, name: "Pannenkoeken", category: "Lunch", price: "5.00", description: "Fluffy pancakes with syrup and butter.", status: "Available", imageUrl: "" },
@@ -22,10 +23,9 @@ const initialMenuItems = [
   { id: 16, name: "Tiramisu", category: "Toetjes", price: "5.50", description: "Classic Italian dessert with coffee and mascarpone.", status: "Available", imageUrl: "" },
 ];
 
-const categories = ["Lunch", "Avondeten", "Drankjes", "Toetjes"];
-
-const MenuEditStartPage = () => {
+const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
   const [menuItems, setMenuItems] = useState(initialMenuItems);
+  const [categories, setCategories] = useState(["Lunch", "Avondeten", "Drankjes", "Toetjes"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedItem, setSelectedItem] = useState(initialMenuItems[0]);
   const fileInputRef = useRef(null);
@@ -52,13 +52,11 @@ const MenuEditStartPage = () => {
     const updatedMenuItems = menuItems.map(item =>
       item.id === updatedItem.id ? updatedItem : item
     );
-    setMenuItems(updatedMenuItems);  // Update menuItems
+    setMenuItems(updatedMenuItems);
+    setSelectedItem(updatedItem);
 
-    setSelectedItem(updatedItem);  // Set the selected item
-    
-    // Update selected category in the sidebar if needed
     if (selectedCategory !== "All" && selectedCategory !== updatedItem.category) {
-      setSelectedCategory(updatedItem.category); // Update selected category
+      setSelectedCategory(updatedItem.category);
     }
   };
 
@@ -124,6 +122,15 @@ const MenuEditStartPage = () => {
           </button>
         </div>
       </div>
+
+      {/* Categorie Bewerken Modal */}
+      {showCategoryEditor && (
+        <CategoryManager
+          categories={categories}
+          setCategories={setCategories}
+          onClose={() => setShowCategoryEditor(false)}
+        />
+      )}
     </div>
   );
 };

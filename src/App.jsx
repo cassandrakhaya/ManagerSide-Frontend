@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import MenuEditStartPage from './pages/MenuEditStartPage.jsx';
 import MenuPage from './pages/MenuPage';
 
 const App = () => {
+  // ✅ Stap 1: Voeg de toggle state toe
+  const [showCategoryEditor, setShowCategoryEditor] = useState(false);
+
   return (
     <Router>
       {/* Hoofd Navbar */}
@@ -23,14 +26,26 @@ const App = () => {
 
       {/* Sub-toolbar */}
       <div className="sub-toolbar">
-        {/* <button className="btn-light">All Categories</button> */}
-        <button className="btn-light">Categorien Bijwerken</button>
+        <button
+          className="btn-light"
+          onClick={() => setShowCategoryEditor(true)}
+        >
+          Categorien Bijwerken
+        </button>
       </div>
 
       {/* Routes */}
       <Routes>
-        <Route path='/' element={<MenuEditStartPage />} />
-        <Route path='/Menu/:category' element={<MenuPage />} />
+        <Route
+          path="/"
+          element={
+            <MenuEditStartPage
+              showCategoryEditor={showCategoryEditor}
+              setShowCategoryEditor={setShowCategoryEditor}
+            />
+          }
+        />
+        <Route path="/Menu/:category" element={<MenuPage />} />
       </Routes>
     </Router>
   );
