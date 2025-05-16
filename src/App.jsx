@@ -4,13 +4,15 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import MenuEditStartPage from './pages/MenuEditStartPage.jsx';
 import MenuPage from './pages/MenuPage';
 
+// ✅ Toastify imports
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const App = () => {
-  // ✅ Stap 1: Voeg de toggle state toe
   const [showCategoryEditor, setShowCategoryEditor] = useState(false);
 
   return (
     <Router>
-      {/* Hoofd Navbar */}
       <div className="navbar">
         <div className="navbar-logo">RestaurantApp</div>
         <div className="navbar-links">
@@ -24,17 +26,15 @@ const App = () => {
         </div>
       </div>
 
-      {/* Sub-toolbar */}
       <div className="sub-toolbar">
         <button
           className="btn-light"
           onClick={() => setShowCategoryEditor(true)}
         >
-          Categorien Bijwerken
+          Categorieën Bijwerken
         </button>
       </div>
 
-      {/* Routes */}
       <Routes>
         <Route
           path="/"
@@ -47,6 +47,17 @@ const App = () => {
         />
         <Route path="/Menu/:category" element={<MenuPage />} />
       </Routes>
+
+      {/* ✅ ToastContainer toevoegen */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </Router>
   );
 };

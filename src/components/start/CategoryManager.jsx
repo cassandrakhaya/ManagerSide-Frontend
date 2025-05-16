@@ -1,22 +1,33 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const CategoryManager = ({ categories, setCategories, onClose }) => {
   const [newCategory, setNewCategory] = useState("");
 
-  const addCategory = () => {
-    const trimmed = newCategory.trim();
-    if (trimmed && !categories.includes(trimmed)) {
-      setCategories([...categories, trimmed]);
-      setNewCategory("");
-    }
-  };
+ const addCategory = () => {
+  const trimmed = newCategory.trim();
+  if (!trimmed) {
+    toast.error("Categorie mag niet leeg zijn.");
+    return;
+  }
+  if (categories.includes(trimmed)) {
+    toast.error("Categorie bestaat al.");
+    return;
+  }
+
+  setCategories([...categories, trimmed]);
+  setNewCategory("");
+  toast.success(`Categorie "${trimmed}" toegevoegd.`);
+};
 
   const removeCategory = (categoryToRemove) => {
     setCategories(categories.filter(cat => cat !== categoryToRemove));
+    toast.info(`Categorie "${categoryToRemove}" verwijderd.`);
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-40 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4">Categorieën Bewerken</h2>
 

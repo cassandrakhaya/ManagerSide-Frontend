@@ -1,50 +1,63 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ProductDetails from '../components/start/ProductDetails';
 import AfbeeldingUpload from '../components/start/AfbeeldingUpload';
 import Sidebar from '../components/start/Sidebar';
 import CategoryManager from '../components/start/CategoryManager';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
+import axios from 'axios';
 
 const initialMenuItems = [
-  { id: 1, name: "Pannenkoeken", category: "Lunch", price: "5.00", description: "Fluffy pancakes with syrup and butter.", status: "Available", imageUrl: "" },
-  { id: 2, name: "Spek en Eieren", category: "Lunch", price: "7.50", description: "Crispy bacon with scrambled eggs.", status: "Available", imageUrl: "" },
-  { id: 3, name: "Havermout met Fruit", category: "Lunch", price: "4.50", description: "Healthy oatmeal with fresh fruits and honey.", status: "Available", imageUrl: "" },
-  { id: 4, name: "Gegrilde Kaastosti", category: "Lunch", price: "4.75", description: "Toasted sandwich with melted cheese.", status: "Available", imageUrl: "" },
-  { id: 5, name: "Caesarsalade", category: "Lunch", price: "6.50", description: "Crisp romaine lettuce with Caesar dressing and croutons.", status: "Available", imageUrl: "" },
-  { id: 6, name: "Clubsandwich", category: "Lunch", price: "7.00", description: "Triple-layered sandwich with turkey, bacon, and lettuce.", status: "Available", imageUrl: "" },
-  { id: 7, name: "Spaghetti Bolognese", category: "Avondeten", price: "8.00", description: "Classic pasta with rich meat sauce.", status: "Available", imageUrl: "" },
-  { id: 8, name: "Salade Niçoise", category: "Avondeten", price: "7.75", description: "French salad with tuna, eggs, and olives.", status: "Available", imageUrl: "" },
-  { id: 9, name: "Vegan Boeuf Bourguignon", category: "Avondeten", price: "8.00", description: "A rich French stew with red wine and vegetables.", status: "Available", imageUrl: "" },
-  { id: 10, name: "Steak met Friet", category: "Avondeten", price: "12.00", description: "Juicy grilled steak with crispy fries.", status: "Available", imageUrl: "" },
-  { id: 11, name: "Coca Cola", category: "Drankjes", price: "2.50", description: "Classic refreshing soft drink.", status: "Available", imageUrl: "" },
-  { id: 12, name: "Vers Sinaasappelsap", category: "Drankjes", price: "3.00", description: "Freshly squeezed orange juice.", status: "Available", imageUrl: "" },
-  { id: 13, name: "Latte", category: "Drankjes", price: "3.50", description: "Smooth espresso with steamed milk.", status: "Available", imageUrl: "" },
-  { id: 14, name: "Appeltaart", category: "Toetjes", price: "4.50", description: "Traditional apple pie with cinnamon.", status: "Available", imageUrl: "" },
-  { id: 15, name: "Chocoladetaart", category: "Toetjes", price: "5.00", description: "Rich and moist chocolate cake.", status: "Available", imageUrl: "" },
-  { id: 16, name: "Tiramisu", category: "Toetjes", price: "5.50", description: "Classic Italian dessert with coffee and mascarpone.", status: "Available", imageUrl: "" },
+  { id: 1, name: "Pannenkoeken", category: "Lunch", price: "5.00", description: "Fluffy pancakes with syrup and butter.", status: true, imageUrl: "" },
+  { id: 2, name: "Spek en Eieren", category: "Lunch", price: "7.50", description: "Crispy bacon with scrambled eggs.", status: true, imageUrl: "" },
+  { id: 3, name: "Havermout met Fruit", category: "Lunch", price: "4.50", description: "Healthy oatmeal with fresh fruits and honey.", status: true, imageUrl: "" },
+  { id: 4, name: "Gegrilde Kaastosti", category: "Lunch", price: "4.75", description: "Toasted sandwich with melted cheese.", status: true, imageUrl: "" },
+  { id: 5, name: "Caesarsalade", category: "Lunch", price: "6.50", description: "Crisp romaine lettuce with Caesar dressing and croutons.", status: true, imageUrl: "" },
+  { id: 6, name: "Clubsandwich", category: "Lunch", price: "7.00", description: "Triple-layered sandwich with turkey, bacon, and lettuce.", status: true, imageUrl: "" },
+  { id: 7, name: "Spaghetti Bolognese", category: "Avondeten", price: "8.00", description: "Classic pasta with rich meat sauce.", status: true, imageUrl: "" },
+  { id: 8, name: "Salade Niçoise", category: "Avondeten", price: "7.75", description: "French salad with tuna, eggs, and olives.", status: true, imageUrl: "" },
+  { id: 9, name: "Vegan Boeuf Bourguignon", category: "Avondeten", price: "8.00", description: "A rich French stew with red wine and vegetables.", status: true, imageUrl: "" },
+  { id: 10, name: "Steak met Friet", category: "Avondeten", price: "12.00", description: "Juicy grilled steak with crispy fries.", status: true, imageUrl: "" },
+  { id: 11, name: "Coca Cola", category: "Drankjes", price: "2.50", description: "Classic refreshing soft drink.", status: true, imageUrl: "" },
+  { id: 12, name: "Vers Sinaasappelsap", category: "Drankjes", price: "3.00", description: "Freshly squeezed orange juice.", status: true, imageUrl: "" },
+  { id: 13, name: "Latte", category: "Drankjes", price: "3.50", description: "Smooth espresso with steamed milk.", status: true, imageUrl: "" },
+  { id: 14, name: "Appeltaart", category: "Toetjes", price: "4.50", description: "Traditional apple pie with cinnamon.", status: true, imageUrl: "" },
+  { id: 15, name: "Chocoladetaart", category: "Toetjes", price: "5.00", description: "Rich and moist chocolate cake.", status: true, imageUrl: "" },
+  { id: 16, name: "Tiramisu", category: "Toetjes", price: "5.50", description: "Classic Italian dessert with coffee and mascarpone.", status: true, imageUrl: "" },
 ];
 
 const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
   const [menuItems, setMenuItems] = useState(initialMenuItems);
   const [categories, setCategories] = useState(["Lunch", "Avondeten", "Drankjes", "Toetjes"]);
+  const [selectedAlergie, setSelectedAlergie] = useState("Allergie selecteren");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedItem, setSelectedItem] = useState(initialMenuItems[0]);
   const fileInputRef = useRef(null);
 
-  const filteredMenuItems = selectedCategory === "All" 
-    ? menuItems 
-    : menuItems.filter(item => item.category === selectedCategory);
+  useEffect(() => {
+    axios.post("/api/dish")
+      .then(response => {
+        console.log("Dishes created successfully:", response.data);
+        addNewProduct();
+      })
+      .catch(error => {
+        console.error("Error creating dishes:", error);
+      });
+  }, []);
 
   const addNewProduct = () => {
     const newProduct = {
-      id: menuItems.length + 1,
+      id: Date.now(),
       name: "",
       category: selectedCategory !== "All" ? selectedCategory : "",
+      allergens: selectedAlergie !== "Allergie selecteren" ? selectedAlergie : "",
       price: "",
       description: "",
-      status: "Available",
+      status: true,
       imageUrl: ""
     };
-    setMenuItems([...menuItems, newProduct]);
+    setMenuItems(prev => [...prev, newProduct]);
     setSelectedItem(newProduct);
   };
 
@@ -54,6 +67,7 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
     );
     setMenuItems(updatedMenuItems);
     setSelectedItem(updatedItem);
+    toast.success("Product succesvol opgeslagen!");
 
     if (selectedCategory !== "All" && selectedCategory !== updatedItem.category) {
       setSelectedCategory(updatedItem.category);
@@ -65,14 +79,14 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      setSelectedItem({ ...selectedItem, imageUrl: reader.result });
+      setSelectedItem(prev => ({ ...prev, imageUrl: reader.result }));
+      toast.success("Afbeelding succesvol geüpload!");
     };
     reader.readAsDataURL(file);
   };
 
   return (
     <div className="min-h-screen flex bg-gray-100 p-6">
-      {/* Sidebar */}
       <Sidebar 
         menuItems={menuItems} 
         categories={categories} 
@@ -81,7 +95,6 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
         setSelectedItem={setSelectedItem}
       />
 
-      {/* Product Details */}
       <div className="w-3/4 bg-white border rounded-lg p-6 ml-4">
         <h2 className="text-xl font-semibold mb-6">Product Beschrijving</h2>
         <div className="flex">
@@ -103,9 +116,9 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
           <div>
             <label className="block text-sm mb-1">Status</label>
             <select
-              value={selectedItem.status}
+              value={selectedItem.status ? "Beschikbaar" : "Niet Beschikbaar"}
               onChange={e =>
-                setSelectedItem({ ...selectedItem, status: e.target.value })
+                setSelectedItem({ ...selectedItem, status: e.target.value === "Beschikbaar" })
               }
               className="p-2 border border-gray-300 rounded text-sm"
             >
@@ -123,7 +136,6 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
         </div>
       </div>
 
-      {/* Categorie Bewerken Modal */}
       {showCategoryEditor && (
         <CategoryManager
           categories={categories}
@@ -131,6 +143,8 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
           onClose={() => setShowCategoryEditor(false)}
         />
       )}
+
+      <ToastContainer />
     </div>
   );
 };
