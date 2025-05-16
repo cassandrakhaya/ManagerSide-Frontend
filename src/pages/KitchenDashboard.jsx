@@ -11,18 +11,32 @@ const KitchenDashboard = () => {
     getData();
   }, []);
 
-  const getData = () => {
-    axios.get("/api/Order/all-ordered-items")
-        .then((result) => {
-          const grouped = groupByOrderId(result.data);
-          setOrders(grouped);
-          console.log("Data responds: ", result.data);
-        })
-        .catch((error) => {
-          console.error("Error met ophalen van data:", error);
-          toast.error("Data ophalen mislukt!");
-        });
+  const getData = async () => {
+    try {
+      const result = await axios.get("/api/Order/all-ordered-items");
+      const grouped = groupByOrderId(result.data);
+
+      const ordersWithTime = await Promise.all(
+          grouped.map(async (order) => {
+            try {
+              const orderDetails = await axios.get(`/api/Order/${order.orderId}`);
+              const time = orderDetails.data.orderTime?.substring(0, 5);
+              return { ...order, time };
+            } catch (err) {
+              console.error(`Fout bij ophalen van order ${order.orderId}`, err);
+              return { ...order, time: "Onbekend" };
+            }
+          })
+      );
+
+      setOrders(ordersWithTime);
+      console.log("Data responds:", ordersWithTime);
+    } catch (error) {
+      console.error("Error met ophalen van data:", error);
+      toast.error("Data ophalen mislukt!");
+    }
   };
+
 
 
   const groupByOrderId = (items) => {
@@ -85,15 +99,24 @@ const KitchenDashboard = () => {
       <div className="w-1/4 bg-white p-6 flex flex-col">
         <h2 className="text-xl font-bold mb-4">Wachtende Gerechten</h2>
         <ul className="flex-grow">
-        {Object.entries(waitingItems)
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([itemName, quantity]) => (
-          <li key={itemName} className="flex justify-between mb-2">
-            <span>{itemName}</span>
-            <span className="font-semibold">{quantity}x</span>
-          </li>
-        ))}
+          {Object.entries(waitingItems)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([itemName, quantity]) => (
+                  <li key={itemName} className="flex justify-between mb-2">
+                    <span>{itemName}</span>
+                    <span className="font-semibold">{quantity}x</span>
+                  </li>
+              ))}
         </ul>
+
+        <button
+            onClick={() => {
+              console.log("Gerecht terughalen");
+            }}
+            className="mt-auto bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+        >
+          Gerecht terughalen
+        </button>
       </div>
     </div>
   );
