@@ -29,6 +29,8 @@ const KitchenDashboard = () => {
           })
       );
 
+      ordersWithTime.sort((a, b) => a.time.localeCompare(b.time));
+
       setOrders(ordersWithTime);
       console.log("Data responds:", ordersWithTime);
     } catch (error) {
