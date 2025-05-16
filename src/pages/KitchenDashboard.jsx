@@ -47,7 +47,7 @@ const KitchenDashboard = () => {
       setConnection(connection);
     })
     .catch(err => {
-      console.error('SignalR Connection Error:', err);
+      console.error('❌SignalR Connection Error:', err);
     });
 
   return () => {
