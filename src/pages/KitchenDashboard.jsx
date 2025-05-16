@@ -60,16 +60,26 @@ const KitchenDashboard = () => {
             const result = await axios.get("/api/Order/all-orders");
 
             const ordersWithItems = result.data
-                .filter(order => order.orderItems && order.orderItems.length > 0)
-                .map(order => ({
-                    orderId: order.orderId,
-                    time: order.orderTime.substring(0, 5),
-                    items: order.orderItems.map(item => ({
-                        name: item.dish?.name || "Onbekend gerecht",
-                        quantity: item.quantity,
-                        status: "waiting"
-                    }))
-                }));
+                .map(order => {
+                    const filteredItems = order.orderItems
+                        .filter(item =>
+                            item.dish &&
+                            item.dish.categories &&
+                            !item.dish.categories.some(cat => cat.categoryId === 3)
+                        )
+                        .map(item => ({
+                            name: item.dish?.name || "Onbekend gerecht",
+                            quantity: item.quantity,
+                            status: "waiting"
+                        }));
+
+                    return {
+                        orderId: order.orderId,
+                        time: order.orderTime.substring(0, 5),
+                        items: filteredItems
+                    };
+                })
+                .filter(order => order.items.length > 0); // Alleen orders met overgebleven items
 
             ordersWithItems.sort((a, b) => a.time.localeCompare(b.time));
             setOrders(ordersWithItems);
@@ -107,7 +117,7 @@ const KitchenDashboard = () => {
                             }}
                             onComplete={() => {
                                 setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
-                                setCompletedOrders(prev => [...prev, order]); // voeg toe aan voltooide
+                                setCompletedOrders(prev => [...prev, order]);
                             }}
                         />
                     </div>
@@ -132,7 +142,6 @@ const KitchenDashboard = () => {
                         if (completedOrders.length === 0) return;
 
                         const lastCompleted = completedOrders[completedOrders.length - 1];
-
                         const resetItems = lastCompleted.items.map(item => ({ ...item, status: "waiting" }));
                         const restoredOrder = { ...lastCompleted, items: resetItems };
 
