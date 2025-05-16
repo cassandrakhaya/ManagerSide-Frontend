@@ -2,6 +2,8 @@
 import React, { useState, useRef } from 'react';
 import ProductDetails from '../components/start/ProductDetails';
 import AfbeeldingUpload from '../components/start/AfbeeldingUpload';
+import Navbar from '../components/Navbar';
+import SubToolbar from '../components/SubToolbar';
 
 const initialMenuItems = [
   { id: 1, name: "Pancakes", category: "Lunch", price: "€5.00", description: "Fluffy pancakes with syrup and butter.", status: "Available", imageUrl: "" },
@@ -65,7 +67,11 @@ const MenuEditStartPage = () => {
   };
 
   return (
+    <main>
+    <Navbar />
+    <SubToolbar />
     <div className="min-h-screen flex bg-gray-100 p-6">
+
       {/* Sidebar */}
       <div className="w-1/4 bg-white shadow rounded-lg p-4">
         <label className="block text-gray-700 font-semibold mb-2">
@@ -151,6 +157,7 @@ const MenuEditStartPage = () => {
         </div>
       </div>
     </div>
+    </main>
   );
 };
 
