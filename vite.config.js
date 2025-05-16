@@ -1,23 +1,23 @@
+import fs from 'fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig(() => {
-  return {
-    plugins: [
-      react(),
-      tailwindcss(),
-    ],
-    server: {
-      proxy: {
-        '^/api/': {
-          target: 'https://localhost:7117',
-          secure: false,
-          changeOrigin: true
-        }
-      },
-      port: 50623
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  server: {
+    https: {
+      key: fs.readFileSync('./localhost-key.pem'),
+      cert: fs.readFileSync('./localhost.pem'),
+    },
+    port: 50623,
+    proxy: {
+      '^/api/': {
+        target: 'https://localhost:7117',
+        secure: false,
+        changeOrigin: true,
+        ws: true,
+      }
     }
-  };
+  }
 });
- 

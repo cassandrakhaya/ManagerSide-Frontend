@@ -1,15 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import OrderCard from "../components/OrderCard";
 import axios from 'axios';
+import * as signalR from '@microsoft/signalr';
 
 const KitchenDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [waitingItems, setWaitingItems] = useState({});
     const [completedOrders, setCompletedOrders] = useState([]); // Nieuw
+    const [connection, setConnection] = useState(null);
 
     useEffect(() => {
         getData();
     }, []);
+
+   useEffect(() => {
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl('https://localhost:7117/orderhub', { withCredentials: true })
+    .withAutomaticReconnect()
+    .configureLogging(signalR.LogLevel.Debug)
+    .build();
+
+  connection.on('ReceiveOrder', (order) => {
+    console.log('Nieuwe order ontvangen via SignalR:', order);
+
+    const newOrder = {
+      orderId: order.orderId,
+      time: order.orderTime.substring(0, 5),
+      items: order.orderItems.map(item => ({
+        name: item.dish?.name || item.dishName || "Onbekend gerecht",
+        quantity: item.quantity,
+        status: "waiting"
+      }))
+    };
+
+    setOrders(prev => {
+      const updated = [...prev, newOrder];
+      updated.sort((a, b) => a.time.localeCompare(b.time));
+      return updated;
+    });
+  });
+
+  // Start de verbinding
+  connection.start()
+    .then(() => {
+      console.log('Verbonden met SignalR hub');
+      setConnection(connection);
+    })
+    .catch(err => {
+      console.error('SignalR Connection Error:', err);
+    });
+
+  return () => {
+    connection.stop().then(() => console.log('SignalR verbinding gestopt.'));
+  };
+}, []);
 
     const getData = async () => {
         try {
@@ -92,7 +136,7 @@ const KitchenDashboard = () => {
                         const resetItems = lastCompleted.items.map(item => ({ ...item, status: "waiting" }));
                         const restoredOrder = { ...lastCompleted, items: resetItems };
 
-                        setOrders(prev => [...prev, restoredOrder]);
+                        setOrders(prev => sortOrdersByTime([restoredOrder, ...prev]));
                         setCompletedOrders(prev => prev.slice(0, -1));
                     }}
                     className="mt-auto bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
