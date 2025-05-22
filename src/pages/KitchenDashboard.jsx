@@ -145,7 +145,12 @@ const KitchenDashboard = () => {
                         const resetItems = lastCompleted.items.map(item => ({ ...item, status: "waiting" }));
                         const restoredOrder = { ...lastCompleted, items: resetItems };
 
-                        setOrders(prev => sortOrdersByTime([restoredOrder, ...prev]));
+                        setOrders(prev => {
+                            const updated = [...prev, restoredOrder];
+                            updated.sort((a, b) => a.time.localeCompare(b.time));
+                            return updated;
+                        });
+
                         setCompletedOrders(prev => prev.slice(0, -1));
                     }}
                     className="mt-auto bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
