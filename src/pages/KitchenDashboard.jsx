@@ -65,7 +65,9 @@ const KitchenDashboard = () => {
                         .filter(item =>
                             item.dish &&
                             item.dish.categories &&
-                            !item.dish.categories.some(cat => cat.categoryId === 3)
+                            !item.dish.categories.some(cat => cat.categoryId === 3) &&
+                            order.status !== "Done" &&
+                            order.status !== "Finished"
                         )
                         .map(item => ({
                             name: item.dish?.name || "Onbekend gerecht",
@@ -118,6 +120,19 @@ const KitchenDashboard = () => {
                             onComplete={() => {
                                 setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
                                 setCompletedOrders(prev => [...prev, order]);
+                                axios.put(
+                                    `https://localhost:7117/api/Order/${order.orderId}/status`,
+                                    "Done",
+                                    {
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        }
+                                    }
+                                ).then(response => {
+                                    console.log("Status succesvol aangepast:", response.data);
+                                }).catch(error => {
+                                    console.error("Fout bij aanpassen status:", error);
+                                });
                             }}
                         />
                     </div>
@@ -152,6 +167,20 @@ const KitchenDashboard = () => {
                         });
 
                         setCompletedOrders(prev => prev.slice(0, -1));
+
+                        axios.put(
+                            `https://localhost:7117/api/Order/${lastCompleted.orderId}/status`,
+                            "Waiting",
+                            {
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        ).then(response => {
+                            console.log("Status succesvol teruggezet naar Waiting:", response.data);
+                        }).catch(error => {
+                            console.error("Fout bij terugzetten status:", error);
+                        });
                     }}
                     className="mt-auto bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
                 >
