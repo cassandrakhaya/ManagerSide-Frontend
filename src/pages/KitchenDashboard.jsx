@@ -13,7 +13,7 @@ const KitchenDashboard = () => {
         getData();
     }, []);
 
-   useEffect(() => {
+    useEffect(() => {
   const connection = new signalR.HubConnectionBuilder()
     .withUrl('https://localhost:7117/orderhub', { withCredentials: true })
     .withAutomaticReconnect()
@@ -47,7 +47,7 @@ const KitchenDashboard = () => {
       setConnection(connection);
     })
     .catch(err => {
-      console.error('❌SignalR Connection Error:', err);
+      console.error('SignalR Connection Error:', err);
     });
 
   return () => {
