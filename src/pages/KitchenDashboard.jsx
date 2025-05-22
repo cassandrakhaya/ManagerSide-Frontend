@@ -77,6 +77,7 @@ const KitchenDashboard = () => {
 
                     return {
                         orderId: order.orderId,
+                        tableId: order.tableId,
                         time: order.orderTime.substring(0, 5),
                         items: filteredItems
                     };
