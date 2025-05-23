@@ -6,6 +6,8 @@ import CategoryManager from '../components/start/CategoryManager';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import Navbar from '../components/Navbar';
+import SubToolbar from '../components/SubToolbar';
 
 const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
   const [menuItems, setMenuItems] = useState([]);
@@ -170,6 +172,9 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
   };
 
   return (
+    <main>
+    <Navbar />
+    <SubToolbar />
     <div className="min-h-screen flex bg-gray-100 p-6">
       <Sidebar
         menuItems={menuItems}
@@ -179,6 +184,51 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
         setSelectedItem={setSelectedItem}
       />
 
+
+      {/* Sidebar */}
+      {/* <div className="w-1/4 bg-white shadow rounded-lg p-4"> */}
+        {/* <label className="block text-gray-700 font-semibold mb-2"> */}
+          {/* Selecteer Categorie */}
+        {/* </label> */}
+        {/* <select */}
+          {/* className="w-full p-2 border rounded mb-4 text-sm" */}
+          {/* value={selectedCategory} */}
+          {/* onChange={e => setSelectedCategory(e.target.value)} */}
+        {/* > */}
+          {/* {categories.map(cat => ( */}
+            {/* <option key={cat} value={cat}> */}
+              {/* {cat} */}
+            {/* </option> */}
+          {/* ))} */}
+        {/* </select> */}
+
+        {/* <h2 className="text-lg font-semibold mb-2">Producten</h2> */}
+        {/* <button */}
+          {/* className="bg-blue-500 text-white p-2 rounded w-full mb-4 text-sm transition-transform transform active:scale-95" */}
+          {/* onClick={addNewProduct} */}
+        {/* > */}
+          {/* + Nieuw Product */}
+        {/* </button> */}
+
+        {/* <ul className="divide-y"> */}
+          {/* {filteredMenuItems.map(item => ( */}
+            {/* <li */}
+              {/* key={item.id} */}
+              {/* className={`p-2 cursor-pointer transition hover:bg-gray-100 ${ */}
+                {/* selectedItem.id === item.id ? "bg-gray-50" : "" */}
+              {/* }`} */}
+              {/* onClick={() => setSelectedItem(item)} */}
+            {/* > */}
+              {/* <div className="font-semibold"> */}
+                {/* {item.name || "New Product"} */}
+              {/* </div> */}
+              {/* <div className="text-xs text-gray-500">{item.price}</div> */}
+            {/* </li> */}
+          {/* ))} */}
+        {/* </ul> */}
+      {/* </div> */}
+
+      {/* Product Details */}
       <div className="w-3/4 bg-white border rounded-lg p-6 ml-4">
         <h2 className="text-xl font-semibold mb-6">Product Beschrijving</h2>
         <div className="flex">
@@ -232,6 +282,7 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
 
       <ToastContainer />
     </div>
+    </main>
   );
 };
 
