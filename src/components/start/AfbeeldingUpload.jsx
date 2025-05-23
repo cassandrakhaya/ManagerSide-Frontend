@@ -1,30 +1,18 @@
 import React from 'react';
 
-const AfbeeldingUpload = ({ selectedItem, setSelectedItem, fileInputRef, handleImageChange }) => {
+// Temporary placeholder: image upload is disabled until backend support is available
+const AfbeeldingUpload = () => {
   return (
     <div className="ml-6">
-      <div className="w-48 h-28 bg-gray-100 rounded overflow-hidden mb-2">
-        {selectedItem.imageUrl && (
-          <img
-            src={selectedItem.imageUrl}
-            alt=""
-            className="object-cover w-full h-full"
-          />
-        )}
+      <div className="w-48 h-28 bg-gray-100 rounded overflow-hidden mb-2 flex items-center justify-center text-gray-400">
+        Geen afbeelding-ondersteuning
       </div>
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        onChange={handleImageChange}
-        className="hidden"
-      />
       <button
         type="button"
-        className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition active:scale-95"
-        onClick={() => fileInputRef.current?.click()}
+        className="px-3 py-1 border border-gray-300 rounded text-sm bg-gray-200 cursor-not-allowed"
+        disabled
       >
-        Afbeelding Aanpassen
+        Afbeelding Aanpassen (uitgeschakeld)
       </button>
     </div>
   );

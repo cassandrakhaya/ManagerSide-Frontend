@@ -5,93 +5,177 @@ import Sidebar from '../components/start/Sidebar';
 import CategoryManager from '../components/start/CategoryManager';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
 import axios from 'axios';
 
-const initialMenuItems = [
-  { id: 1, name: "Pannenkoeken", category: "Lunch", price: "5.00", description: "Fluffy pancakes with syrup and butter.", status: true, imageUrl: "" },
-  { id: 2, name: "Spek en Eieren", category: "Lunch", price: "7.50", description: "Crispy bacon with scrambled eggs.", status: true, imageUrl: "" },
-  { id: 3, name: "Havermout met Fruit", category: "Lunch", price: "4.50", description: "Healthy oatmeal with fresh fruits and honey.", status: true, imageUrl: "" },
-  { id: 4, name: "Gegrilde Kaastosti", category: "Lunch", price: "4.75", description: "Toasted sandwich with melted cheese.", status: true, imageUrl: "" },
-  { id: 5, name: "Caesarsalade", category: "Lunch", price: "6.50", description: "Crisp romaine lettuce with Caesar dressing and croutons.", status: true, imageUrl: "" },
-  { id: 6, name: "Clubsandwich", category: "Lunch", price: "7.00", description: "Triple-layered sandwich with turkey, bacon, and lettuce.", status: true, imageUrl: "" },
-  { id: 7, name: "Spaghetti Bolognese", category: "Avondeten", price: "8.00", description: "Classic pasta with rich meat sauce.", status: true, imageUrl: "" },
-  { id: 8, name: "Salade Niçoise", category: "Avondeten", price: "7.75", description: "French salad with tuna, eggs, and olives.", status: true, imageUrl: "" },
-  { id: 9, name: "Vegan Boeuf Bourguignon", category: "Avondeten", price: "8.00", description: "A rich French stew with red wine and vegetables.", status: true, imageUrl: "" },
-  { id: 10, name: "Steak met Friet", category: "Avondeten", price: "12.00", description: "Juicy grilled steak with crispy fries.", status: true, imageUrl: "" },
-  { id: 11, name: "Coca Cola", category: "Drankjes", price: "2.50", description: "Classic refreshing soft drink.", status: true, imageUrl: "" },
-  { id: 12, name: "Vers Sinaasappelsap", category: "Drankjes", price: "3.00", description: "Freshly squeezed orange juice.", status: true, imageUrl: "" },
-  { id: 13, name: "Latte", category: "Drankjes", price: "3.50", description: "Smooth espresso with steamed milk.", status: true, imageUrl: "" },
-  { id: 14, name: "Appeltaart", category: "Toetjes", price: "4.50", description: "Traditional apple pie with cinnamon.", status: true, imageUrl: "" },
-  { id: 15, name: "Chocoladetaart", category: "Toetjes", price: "5.00", description: "Rich and moist chocolate cake.", status: true, imageUrl: "" },
-  { id: 16, name: "Tiramisu", category: "Toetjes", price: "5.50", description: "Classic Italian dessert with coffee and mascarpone.", status: true, imageUrl: "" },
-];
-
 const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
-  const [menuItems, setMenuItems] = useState(initialMenuItems);
-  const [categories, setCategories] = useState(["Lunch", "Avondeten", "Drankjes", "Toetjes"]);
-  const [selectedAlergie, setSelectedAlergie] = useState("Allergie selecteren");
+  const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [allergens, setAllergens] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedItem, setSelectedItem] = useState(initialMenuItems[0]);
+  const [selectedItem, setSelectedItem] = useState(null);
   const fileInputRef = useRef(null);
 
+  // Fetch all data on mount
   useEffect(() => {
-    axios.post("/api/dish")
-      .then(response => {
-        console.log("Dishes created successfully:", response.data);
-        addNewProduct();
-      })
-      .catch(error => {
-        console.error("Error creating dishes:", error);
-      });
+    fetchAllData();
   }, []);
 
-  const addNewProduct = () => {
-    const newProduct = {
-      id: Date.now(),
-      name: "",
-      category: selectedCategory !== "All" ? selectedCategory : "",
-      allergens: selectedAlergie !== "Allergie selecteren" ? selectedAlergie : "",
-      price: "",
-      description: "",
-      status: true,
-      imageUrl: ""
-    };
-    setMenuItems(prev => [...prev, newProduct]);
-    setSelectedItem(newProduct);
-  };
-
-  const onSave = updatedItem => {
-    const updatedMenuItems = menuItems.map(item =>
-      item.id === updatedItem.id ? updatedItem : item
-    );
-    setMenuItems(updatedMenuItems);
-    setSelectedItem(updatedItem);
-    toast.success("Product succesvol opgeslagen!");
-
-    if (selectedCategory !== "All" && selectedCategory !== updatedItem.category) {
-      setSelectedCategory(updatedItem.category);
+  const fetchAllData = async () => {
+    try {
+      const [dishesRes, categoriesRes, allergensRes] = await Promise.all([
+        axios.get('/api/dish'),
+        axios.get('/api/categories'),
+        axios.get('/api/allergens')
+      ]);
+      setMenuItems(dishesRes.data);
+      setCategories(categoriesRes.data); // full objects
+      setAllergens(allergensRes.data);   // full objects
+      setSelectedItem(dishesRes.data[0] || null);
+    } catch (err) {
+      toast.error("Fout bij laden van data!");
     }
   };
 
-  const handleImageChange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setSelectedItem(prev => ({ ...prev, imageUrl: reader.result }));
-      toast.success("Afbeelding succesvol geüpload!");
-    };
-    reader.readAsDataURL(file);
+  // Helper: get category/allergen IDs from names
+  const getCategoryIds = (categoryNames) => {
+    return categories
+      .filter(cat => categoryNames.includes(cat.name))
+      .map(cat => cat.categoryId);
+  };
+
+  const getAllergenIds = (allergenNames) => {
+    return allergens
+      .filter(al => allergenNames.includes(al.name))
+      .map(al => al.allergenId);
+  };
+
+  const addNewProduct = async () => {
+    try {
+      const newProduct = {
+        name: "",
+        description: "",
+        price: 0,
+        isAvailable: true,
+        categoryIds: [],
+        allergenIds: []
+      };
+      const res = await axios.post('/api/dish', newProduct);
+      setMenuItems(prev => [...prev, res.data]);
+      setSelectedItem(res.data);
+    } catch (err) {
+      toast.error("Fout bij toevoegen van product!");
+    }
+  };
+
+  const onSave = async updatedItem => {
+    try {
+      // Convert categories/allergies (names) to IDs for backend
+      const categoryIds = getCategoryIds(updatedItem.categories || []);
+      const allergenIds = getAllergenIds(updatedItem.allergies || []);
+
+      // Try to find an existing dish by name (case-insensitive)
+      const existingDish = menuItems.find(
+        d => d.name.trim().toLowerCase() === updatedItem.name.trim().toLowerCase()
+      );
+
+      if (existingDish) {
+        // Build full objects with required fields for PUT
+        const categoryObjs = categories
+          .filter(cat => (updatedItem.categories || []).includes(cat.name))
+          .map(cat => ({
+            categoryId: cat.categoryId,
+            name: cat.name,
+            dishes: [] // required by backend
+          }));
+
+        const allergenObjs = allergens
+          .filter(al => (updatedItem.allergies || []).includes(al.name))
+          .map(al => ({
+            allergenId: al.allergenId,
+            name: al.name,
+            dishes: [] // required by backend
+          }));
+
+        await axios.put(`/api/dish/${existingDish.dishID || existingDish.id}`, {
+          dishID: existingDish.dishID || existingDish.id,
+          name: updatedItem.name,
+          description: updatedItem.description,
+          price: Number(
+            typeof updatedItem.price === "string"
+              ? updatedItem.price.replace("€", "").replace(",", ".")
+              : updatedItem.price
+          ),
+          isAvailable: updatedItem.status ?? true,
+          categories: categoryObjs,
+          allergens: allergenObjs
+        });
+        toast.success("Product succesvol bijgewerkt!");
+      } else {
+        // Create new dish (POST expects only IDs)
+        await axios.post('/api/dish', {
+          name: updatedItem.name,
+          description: updatedItem.description,
+          price: Number(
+            typeof updatedItem.price === "string"
+              ? updatedItem.price.replace("€", "").replace(",", ".")
+              : updatedItem.price
+          ),
+          isAvailable: updatedItem.status ?? true,
+          categoryIds,
+          allergenIds
+        });
+        toast.success("Product succesvol aangemaakt!");
+      }
+
+      // Refetch all dishes to get updated data
+      fetchAllData();
+
+      // Optionally update selectedCategory if needed
+      if (
+        selectedCategory !== "All" &&
+        updatedItem.categories &&
+        !updatedItem.categories.includes(selectedCategory)
+      ) {
+        setSelectedCategory(updatedItem.categories[0] || "All");
+      }
+    } catch (err) {
+      toast.error("Fout bij opslaan van product!");
+    }
+  };
+
+  // Category CRUD
+  const handleAddCategory = async (name) => {
+    try {
+      const res = await axios.post('/api/categories', { name });
+      setCategories([...categories, res.data]);
+      toast.success(`Categorie "${res.data.name}" toegevoegd.`);
+    } catch (err) {
+      toast.error("Fout bij toevoegen categorie!");
+    }
+  };
+
+  const handleRemoveCategory = async (name) => {
+    try {
+      const found = categories.find(c => c.name === name);
+      if (!found) {
+        toast.error("Categorie niet gevonden.");
+        return;
+      }
+      await axios.delete(`/api/categories/${found.categoryId}`);
+      setCategories(categories.filter(cat => cat.name !== name));
+      toast.info(`Categorie "${name}" verwijderd.`);
+    } catch (err) {
+      toast.error("Fout bij verwijderen categorie.");
+    }
   };
 
   return (
     <div className="min-h-screen flex bg-gray-100 p-6">
-      <Sidebar 
-        menuItems={menuItems} 
-        categories={categories} 
+      <Sidebar
+        menuItems={menuItems}
+        categories={["All", ...categories.map(c => c.name)]}
         selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory} 
+        setSelectedCategory={setSelectedCategory}
         setSelectedItem={setSelectedItem}
       />
 
@@ -102,21 +186,19 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
             addNewProduct={addNewProduct}
-            categories={categories}
+            categories={categories.map(c => c.name)}
+            allergens={allergens.map(a => a.name)}
+            menuItems={menuItems}
+            setMenuItems={setMenuItems}
           />
-          <AfbeeldingUpload
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-            fileInputRef={fileInputRef}
-            handleImageChange={handleImageChange}
-          />
+          {/* Remove AfbeeldingUpload until backend support is available */}
         </div>
 
         <div className="mt-8 flex items-center justify-between">
           <div>
             <label className="block text-sm mb-1">Status</label>
             <select
-              value={selectedItem.status ? "Beschikbaar" : "Niet Beschikbaar"}
+              value={selectedItem?.status ? "Beschikbaar" : "Niet Beschikbaar"}
               onChange={e =>
                 setSelectedItem({ ...selectedItem, status: e.target.value === "Beschikbaar" })
               }
@@ -138,8 +220,12 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
 
       {showCategoryEditor && (
         <CategoryManager
-          categories={categories}
-          setCategories={setCategories}
+          categories={categories.map(c => c.name)}
+          setCategories={cats => setCategories(
+            cats.map(name => categories.find(c => c.name === name) || { name })
+          )}
+          onAddCategory={handleAddCategory}
+          onRemoveCategory={handleRemoveCategory}
           onClose={() => setShowCategoryEditor(false)}
         />
       )}

@@ -1,29 +1,54 @@
 import React, { useState } from 'react';
-import { ToastContainer, toast } from "react-toastify";
+import axios from 'axios';
+import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 const CategoryManager = ({ categories, setCategories, onClose }) => {
   const [newCategory, setNewCategory] = useState("");
+  const [loading, setLoading] = useState(false);
 
- const addCategory = () => {
-  const trimmed = newCategory.trim();
-  if (!trimmed) {
-    toast.error("Categorie mag niet leeg zijn.");
-    return;
-  }
-  if (categories.includes(trimmed)) {
-    toast.error("Categorie bestaat al.");
-    return;
-  }
+  // Add category via backend (use correct endpoint and object structure)
+  const addCategory = async () => {
+    const trimmed = newCategory.trim();
+    if (!trimmed) {
+      toast.error("Categorie mag niet leeg zijn.");
+      return;
+    }
+    if (categories.includes(trimmed)) {
+      toast.error("Categorie bestaat al.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post('/api/categories', { name: trimmed });
+      setCategories([...categories, res.data.name]);
+      setNewCategory("");
+      toast.success(`Categorie "${trimmed}" toegevoegd.`);
+    } catch {
+      toast.error("Fout bij toevoegen categorie.");
+    }
+    setLoading(false);
+  };
 
-  setCategories([...categories, trimmed]);
-  setNewCategory("");
-  toast.success(`Categorie "${trimmed}" toegevoegd.`);
-};
-
-  const removeCategory = (categoryToRemove) => {
-    setCategories(categories.filter(cat => cat !== categoryToRemove));
-    toast.info(`Categorie "${categoryToRemove}" verwijderd.`);
+  // Remove category via backend (use correct endpoint and object structure)
+  const removeCategory = async (categoryToRemove) => {
+    setLoading(true);
+    try {
+      // Find category id by name (if available)
+      const catRes = await axios.get('/api/categories');
+      const found = catRes.data.find(c => c.name === categoryToRemove);
+      if (!found) {
+        toast.error("Categorie niet gevonden.");
+        setLoading(false);
+        return;
+      }
+      await axios.delete(`/api/categories/${found.categoryId || found.id}`);
+      setCategories(categories.filter(cat => cat !== categoryToRemove));
+      toast.info(`Categorie "${categoryToRemove}" verwijderd.`);
+    } catch {
+      toast.error("Fout bij verwijderen categorie.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -38,6 +63,7 @@ const CategoryManager = ({ categories, setCategories, onClose }) => {
               <button
                 onClick={() => removeCategory(cat)}
                 className="text-red-500 text-sm hover:underline"
+                disabled={loading}
               >
                 Verwijderen
               </button>
@@ -52,10 +78,12 @@ const CategoryManager = ({ categories, setCategories, onClose }) => {
             onChange={(e) => setNewCategory(e.target.value)}
             className="flex-1 border p-2 rounded text-sm"
             placeholder="Nieuwe categorie"
+            disabled={loading}
           />
           <button
             onClick={addCategory}
             className="bg-blue-500 text-white px-3 rounded hover:bg-blue-600 text-sm"
+            disabled={loading}
           >
             Toevoegen
           </button>
@@ -64,6 +92,7 @@ const CategoryManager = ({ categories, setCategories, onClose }) => {
         <button
           onClick={onClose}
           className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 text-sm w-full"
+          disabled={loading}
         >
           Sluiten
         </button>

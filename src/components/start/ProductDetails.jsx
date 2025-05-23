@@ -1,21 +1,39 @@
 import React, { useState } from 'react';
 
-const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, setMenuItems }) => {
-  const allergien = ['Gluten', 'Lactose', 'Noten', 'Eieren', 'Soja'];
-
+const ProductDetails = ({
+  selectedItem,
+  setSelectedItem,
+  categories,
+  allergens,
+  menuItems,
+  setMenuItems
+}) => {
   const [selectedCategory, setSelectedCategory] = useState('Categorie selecteren');
   const [selectedAlergie, setSelectedAlergie] = useState('Allergie selecteren');
 
+  // Guard: if no product is selected, show a message
+  if (!selectedItem) {
+    return (
+      <div className="flex-1 space-y-4 p-4">
+        <p className="text-gray-500">Selecteer een product om details te bekijken of te bewerken.</p>
+      </div>
+    );
+  }
+
+  // Update selectedItem and menuItems in parent
   const updateSelectedItem = (updatedFields) => {
     const updatedItem = { ...selectedItem, ...updatedFields };
     setSelectedItem(updatedItem);
 
-    const updatedMenuItems = menuItems.map(item =>
-      item.id === updatedItem.id ? updatedItem : item
-    );
-    setMenuItems(updatedMenuItems);
+    if (setMenuItems && menuItems) {
+      const updatedMenuItems = menuItems.map(item =>
+        (item.dishID || item.id) === (updatedItem.dishID || updatedItem.id) ? updatedItem : item
+      );
+      setMenuItems(updatedMenuItems);
+    }
   };
 
+  // Add/remove category (by name)
   const addCategoryToProduct = (category) => {
     const existing = selectedItem.categories || [];
     if (!existing.includes(category)) {
@@ -24,10 +42,11 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
   };
 
   const removeCategoryFromProduct = (categoryToRemove) => {
-    const updated = selectedItem.categories.filter(c => c !== categoryToRemove);
+    const updated = (selectedItem.categories || []).filter(c => c !== categoryToRemove);
     updateSelectedItem({ categories: updated });
   };
 
+  // Add/remove allergen (by name)
   const addAlergieToProduct = (allergie) => {
     const existing = selectedItem.allergies || [];
     if (!existing.includes(allergie)) {
@@ -36,7 +55,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
   };
 
   const removeAlergieFromProduct = (allergieToRemove) => {
-    const updated = selectedItem.allergies.filter(a => a !== allergieToRemove);
+    const updated = (selectedItem.allergies || []).filter(a => a !== allergieToRemove);
     updateSelectedItem({ allergies: updated });
   };
 
@@ -46,7 +65,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
         <label className="block text-sm mb-1">Naam</label>
         <input
           type="text"
-          value={selectedItem.name}
+          value={selectedItem.name || ''}
           onChange={e => updateSelectedItem({ name: e.target.value })}
           className="w-full p-2 border border-gray-300 rounded text-sm"
         />
@@ -57,8 +76,12 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
           <label className="block text-sm mb-1">Prijs</label>
           <input
             type="text"
-            value={selectedItem.price.replace("€", "")}
-            onChange={e => updateSelectedItem({ price: `€${e.target.value}` })}
+            value={
+              selectedItem.price !== undefined && selectedItem.price !== null
+                ? String(selectedItem.price).replace("€", "")
+                : ''
+            }
+            onChange={e => updateSelectedItem({ price: e.target.value })}
             className="w-full p-2 border border-gray-300 rounded text-sm"
           />
         </div>
@@ -80,7 +103,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
             }}
           >
             <option value="Categorie selecteren" disabled>Categorie selecteren</option>
-            {categories.filter(c => c !== "All").map(c => (
+            {categories && categories.filter(c => c !== "All").map(c => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
@@ -125,8 +148,8 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
             }}
           >
             <option value="Allergie selecteren" disabled>Allergie selecteren</option>
-            {allergien.map(c => (
-              <option key={c} value={c}>{c}</option>
+            {allergens && allergens.map(a => (
+              <option key={a} value={a}>{a}</option>
             ))}
           </select>
         </div>
@@ -159,7 +182,7 @@ const ProductDetails = ({ selectedItem, setSelectedItem, categories, menuItems, 
         <label className="block text-sm mb-1">Product beschrijving</label>
         <textarea
           rows={4}
-          value={selectedItem.description}
+          value={selectedItem.description || ''}
           onChange={e => updateSelectedItem({ description: e.target.value })}
           className="w-full p-2 border border-gray-300 rounded text-sm resize-none"
         />
