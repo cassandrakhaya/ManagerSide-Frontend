@@ -24,6 +24,7 @@ const BarDashboard = () => {
         console.log('Nieuwe order ontvangen via SignalR:', order);
     
         const newOrder = {
+            tableId: order.tableId,
           orderId: order.orderId,
           time: order.orderTime.substring(0, 5),
           items: order.orderItems.map(item => ({
@@ -77,6 +78,7 @@ const BarDashboard = () => {
                             }));
 
                         return {
+                            tableId: order.tableId,
                             orderId: order.orderId,
                             time: order.orderTime.substring(0, 5),
                             items: filteredItems
@@ -90,6 +92,7 @@ const BarDashboard = () => {
                 console.error("Error bij ophalen van data:", error);
             }
         };
+    
 
         useEffect(() => {
             const itemsCount = {};

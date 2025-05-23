@@ -24,7 +24,8 @@ const KitchenDashboard = () => {
     console.log('Nieuwe order ontvangen via SignalR:', order);
 
     const newOrder = {
-      orderId: order.orderId,
+        tableId: order.tableId,
+        orderId: order.orderId,
       time: order.orderTime.substring(0, 5),
       items: order.orderItems.map(item => ({
         name: item.dish?.name || item.dishName || "Onbekend gerecht",
