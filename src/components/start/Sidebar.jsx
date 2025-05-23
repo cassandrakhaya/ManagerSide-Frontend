@@ -24,7 +24,7 @@ const Sidebar = ({ menuItems, categories, selectedCategory, setSelectedCategory,
           })
         }
       >
-        New product
+        Nieuw product
       </button>
 
       <h2 className="text-lg font-semibold mb-2">{selectedCategory.toUpperCase()}</h2>

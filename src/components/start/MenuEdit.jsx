@@ -41,7 +41,7 @@ const MenuForm = () => {
                 onClick={handleMenu}
                 className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-300"
             >
-                Save
+                Opslaan
             </button>
         </div>
     );
