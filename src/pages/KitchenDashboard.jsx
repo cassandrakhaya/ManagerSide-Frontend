@@ -23,23 +23,33 @@ const KitchenDashboard = () => {
   connection.on('ReceiveOrder', (order) => {
     console.log('Nieuwe order ontvangen via SignalR:', order);
 
-    const newOrder = {
-        tableId: order.tableId,
-        orderId: order.orderId,
-      time: order.orderTime.substring(0, 5),
-      items: order.orderItems.map(item => ({
-        name: item.dish?.name || item.dishName || "Onbekend gerecht",
-        quantity: item.quantity,
-        status: "waiting"
-      }))
-    };
+    const filteredItems = order.orderItems
+    .filter(item =>
+      item.dish &&
+      item.dish.categories &&
+      !item.dish.categories.some(cat => cat.categoryId === 3)
+    )
+    .map(item => ({
+      name: item.dish?.name || item.dishName || "Onbekend gerecht",
+      quantity: item.quantity,
+      status: "waiting"
+    }));
 
-    setOrders(prev => {
-      const updated = [...prev, newOrder];
-      updated.sort((a, b) => a.time.localeCompare(b.time));
-      return updated;
-    });
+  if (filteredItems.length === 0) return; // Geen relevante items? Sla de order over
+
+  const newOrder = {
+    tableId: order.tableId,
+    orderId: order.orderId,
+    time: order.orderTime.substring(0, 5),
+    items: filteredItems
+  };
+
+  setOrders(prev => {
+    const updated = [...prev, newOrder];
+    updated.sort((a, b) => a.time.localeCompare(b.time));
+    return updated;
   });
+});
 
   // Start de verbinding
   connection.start()
