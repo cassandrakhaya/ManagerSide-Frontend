@@ -1,42 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './Sidebar.css';
+import React from 'react';
 
 const Sidebar = ({
+  menuItems,
+  categories,
   selectedCategory,
   setSelectedCategory,
   setSelectedItem,
-  refreshTrigger // optional: to refetch when parent updates
 }) => {
-  const [categories, setCategories] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch categories and menu items from backend
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [catRes, dishRes] = await Promise.all([
-          axios.get('/api/categories'),
-          axios.get('/api/dish')
-        ]);
-        setCategories(['All', ...catRes.data.map(c => c.name)]);
-        setMenuItems(dishRes.data);
-        if (!selectedCategory) setSelectedCategory('All');
-      } catch (err) {
-        // Handle error as needed
-      }
-      setLoading(false);
-    };
-    fetchData();
-    // eslint-disable-next-line
-  }, [refreshTrigger]);
-
-  if (loading) {
-    return <div className="w-1/4 p-4">Laden...</div>;
-  }
-
   return (
     <div className="w-1/4 bg-white shadow-lg rounded-lg p-4">
       <select
@@ -59,8 +29,8 @@ const Sidebar = ({
             description: '',
             categories: [],
             allergies: [],
-            status: true,
-            imageUrl: ''
+            status: true
+            // imageUrl: ''
           })
         }
       >
@@ -72,7 +42,11 @@ const Sidebar = ({
         {menuItems
           .filter(item =>
             selectedCategory === "All" ||
-            (item.categories && item.categories.includes(selectedCategory))
+            (item.categories && item.categories.some(cat =>
+              typeof cat === "string"
+                ? cat === selectedCategory
+                : cat.name === selectedCategory
+            ))
           )
           .map(item => (
             <li

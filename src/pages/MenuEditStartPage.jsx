@@ -29,10 +29,13 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
         axios.get('/api/categories'),
         axios.get('/api/allergens')
       ]);
-      setMenuItems(dishesRes.data);
-      setCategories(categoriesRes.data); // full objects
-      setAllergens(allergensRes.data);   // full objects
-      setSelectedItem(dishesRes.data[0] || null);
+      setCategories(categoriesRes.data);
+      setAllergens(allergensRes.data);
+
+      // Normalize all dishes!
+      const normalizedDishes = dishesRes.data.map(normalizeDish);
+      setMenuItems(normalizedDishes);
+      setSelectedItem(normalizedDishes[0] || null);
     } catch (err) {
       toast.error("Fout bij laden van data!");
     }
@@ -71,33 +74,29 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
 
   const onSave = async updatedItem => {
     try {
-      // Convert categories/allergies (names) to IDs for backend
-      const categoryIds = getCategoryIds(updatedItem.categories || []);
-      const allergenIds = getAllergenIds(updatedItem.allergies || []);
+      // Only include categories with both categoryId and name
+      const categoryObjs = (updatedItem.categories || [])
+        .filter(cat => cat && cat.categoryId && cat.name)
+        .map(cat => ({
+          categoryId: cat.categoryId,
+          name: cat.name,
+          dishes: []
+        }));
 
-      // Try to find an existing dish by name (case-insensitive)
+      // Only include allergens with both allergenId and name
+      const allergenObjs = (updatedItem.allergies || [])
+        .filter(al => al && al.allergenId && al.name)
+        .map(al => ({
+          allergenId: al.allergenId,
+          name: al.name,
+          dishes: []
+        }));
+
       const existingDish = menuItems.find(
         d => d.name.trim().toLowerCase() === updatedItem.name.trim().toLowerCase()
       );
 
       if (existingDish) {
-        // Build full objects with required fields for PUT
-        const categoryObjs = categories
-          .filter(cat => (updatedItem.categories || []).includes(cat.name))
-          .map(cat => ({
-            categoryId: cat.categoryId,
-            name: cat.name,
-            dishes: [] // required by backend
-          }));
-
-        const allergenObjs = allergens
-          .filter(al => (updatedItem.allergies || []).includes(al.name))
-          .map(al => ({
-            allergenId: al.allergenId,
-            name: al.name,
-            dishes: [] // required by backend
-          }));
-
         await axios.put(`/api/dish/${existingDish.dishID || existingDish.id}`, {
           dishID: existingDish.dishID || existingDish.id,
           name: updatedItem.name,
@@ -108,8 +107,8 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
               : updatedItem.price
           ),
           isAvailable: updatedItem.status ?? true,
-          categories: categoryObjs,
-          allergens: allergenObjs
+          categoryIds: (updatedItem.categories || []).map(cat => cat.categoryId),
+          allergenIds: (updatedItem.allergies || []).map(al => al.allergenId)
         });
         toast.success("Product succesvol bijgewerkt!");
       } else {
@@ -129,16 +128,14 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
         toast.success("Product succesvol aangemaakt!");
       }
 
-      // Refetch all dishes to get updated data
       fetchAllData();
 
-      // Optionally update selectedCategory if needed
       if (
         selectedCategory !== "All" &&
         updatedItem.categories &&
-        !updatedItem.categories.includes(selectedCategory)
+        !updatedItem.categories.some(cat => cat.name === selectedCategory)
       ) {
-        setSelectedCategory(updatedItem.categories[0] || "All");
+        setSelectedCategory(updatedItem.categories[0]?.name || "All");
       }
     } catch (err) {
       toast.error("Fout bij opslaan van product!");
@@ -171,6 +168,24 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
     }
   };
 
+  const normalizeDish = (dish) => ({
+    ...dish,
+    categories: (dish.categories || [])
+      .map(cat =>
+        typeof cat === "object"
+          ? (cat.categoryId && cat.name ? cat : null)
+          : categories.find(c => c.name === cat) || null
+      )
+      .filter(Boolean), // Remove nulls
+    allergies: (dish.allergens || dish.allergies || [])
+      .map(al =>
+        typeof al === "object"
+          ? (al.allergenId && al.name ? al : null)
+          : allergens.find(a => a.name === al) || null
+      )
+      .filter(Boolean), // Remove nulls
+  });
+
   return (
     <main>
     <Navbar />
@@ -181,7 +196,7 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
         categories={["All", ...categories.map(c => c.name)]}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
-        setSelectedItem={setSelectedItem}
+        setSelectedItem={item => setSelectedItem(normalizeDish(item))}
       />
 
 
@@ -236,8 +251,8 @@ const MenuEditStartPage = ({ showCategoryEditor, setShowCategoryEditor }) => {
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
             addNewProduct={addNewProduct}
-            categories={categories.map(c => c.name)}
-            allergens={allergens.map(a => a.name)}
+            categories={categories}      // ✅ Full objects
+            allergens={allergens}        // ✅ Full objects
             menuItems={menuItems}
             setMenuItems={setMenuItems}
           />
