@@ -10,7 +10,7 @@ export default defineConfig({
       key: fs.readFileSync('./localhost-key.pem'),
       cert: fs.readFileSync('./localhost.pem'),
     },
-    port: 50623,
+    port: 5173,
     proxy: {
       '^/api/': {
         target: 'https://localhost:7117',
