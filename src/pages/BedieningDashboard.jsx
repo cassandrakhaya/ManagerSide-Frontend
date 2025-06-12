@@ -23,9 +23,18 @@ const BedieningDashboard = () => {
         connection.on('ReceiveOrder', (order) => {
             console.log('Nieuwe order ontvangen via SignalR (bediening):', order);
 
+            if (order.status === "Waiting" || order.status === "Bar Finished" || order.status === "Keuken Finished") {
+                setOrders(prev => prev.filter(o => o.orderId !== order.orderId));
+                return;
+            }
+
             const filteredItems = order.orderItems
                 .filter(item =>
-                    order.status == "Done"
+                    order.status === "Done" ||
+                    order.status === "Bar Done" ||
+                    order.status === "Keuken Done" ||
+                    order.status === "Bar PreDone" ||
+                    order.status === "Keuken PreDone"
                 )
                 .map(item => ({
                     name: item.dish?.name || item.dishName || "Onbekend gerecht",
@@ -68,65 +77,20 @@ const BedieningDashboard = () => {
             connection.stop().then(() => console.log('SignalR verbinding gestopt.'));
         };
     }, []);
-
-
-
-    /*
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl('https://localhost:7117/orderhub', { withCredentials: true })
-        .withAutomaticReconnect()
-        .configureLogging(signalR.LogLevel.Debug)
-        .build();
-
-    connection.on('ReceiveOrder', (order) => {
-        console.log('Nieuwe order ontvangen via SignalR:', order);
-
-        const filteredItems = order.orderItems
-            .filter(order => order.status === "Done")
-            .map(item => ({
-                name: item.dish?.name || item.dishName || "Onbekend gerecht",
-                quantity: item.quantity,
-                status: "done"
-            }));
-
-        if (filteredItems.length === 0) return;
-
-        const newOrder = {
-            tableId: order.tableId,
-            orderId: order.orderId,
-            time: order.orderTime.substring(0, 5),
-            items: filteredItems
-        };
-
-        setOrders(prev => {
-            const updated = [...prev, newOrder];
-            updated.sort((a, b) => a.time.localeCompare(b.time));
-            return updated;
-        });
-    });
-
-    // Start de verbinding
-    connection.start()
-        .then(() => {
-            console.log('Verbonden met SignalR hub');
-            setConnection(connection);
-        })
-        .catch(err => {
-            console.error('SignalR Connection Error:', err);
-        });
-
-    return () => {
-        connection.stop().then(() => console.log('SignalR verbinding gestopt.'));
-    };
-}, []);
-     */
+    
 
     const getData = async () => {
         try {
             const result = await axios.get("/api/Order/all-orders");
 
             const ordersWithItems = result.data
-                .filter(order => order.status === "Done")
+                .filter(order => 
+                    order.status === "Done" ||
+                    order.status === "Bar Done" ||
+                    order.status === "Keuken Done" ||
+                    order.status === "Bar PreDone" ||
+                    order.status === "Keuken PreDone"
+                )
                 .map(order => {
                     const filteredItems = order.orderItems.map(item => ({
                         name: item.dish?.name || "Onbekend gerecht",
@@ -137,6 +101,7 @@ const BedieningDashboard = () => {
                     return {
                         orderId: order.orderId,
                         tableId: order.tableId,
+                        status: order.status,
                         time: order.orderTime.substring(0, 5),
                         items: filteredItems
                     };
@@ -169,12 +134,33 @@ const BedieningDashboard = () => {
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Bedieningoverzicht</h1>
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             if (completedOrders.length === 0) return;
 
                             const lastCompleted = completedOrders[completedOrders.length - 1];
-                            const resetItems = lastCompleted.items.map(item => ({ ...item, status: "done" }));
-                            const restoredOrder = { ...lastCompleted, items: resetItems };
+
+                            await getData();
+                            let newStatus = null;
+
+                            switch (lastCompleted.status) {
+                                case "Finished":
+                                case "Bar PreDone":
+                                case "Keuken PreDone":
+                                    newStatus = "Done";
+                                    break;
+                                case "Bar Finished":
+                                    newStatus = "Bar Done";
+                                    break;
+                                case "Keuken Finished":
+                                    newStatus = "Keuken Done";
+                                    break;
+                                default:
+                                    console.log("Kan bediening-status niet terugzetten voor status:", lastCompleted.status);
+                                    return;
+                            }
+
+                            const resetItems = lastCompleted.items.map(item => ({...item, status: "done"}));
+                            const restoredOrder = {...lastCompleted, items: resetItems};
 
                             setOrders(prev => {
                                 const updated = [...prev, restoredOrder];
@@ -214,12 +200,33 @@ const BedieningDashboard = () => {
                                     prevOrders.map((o) => o.orderId === updatedOrder.orderId ? updatedOrder : o)
                                 );
                             }}
-                            onComplete={() => {
+                            onComplete={async () => {
+                                await getData();
+                                let newStatus = order.status;
+
+                                if (order.status === "Bar Done") {
+                                    newStatus = "Bar Finished";
+                                } else if (order.status === "Keuken Done") {
+                                    newStatus = "Keuken Finished";
+                                } else if (order.status === "Done") {
+                                    newStatus = "Finished";
+                                } else if (order.status === "Bar PreDone" || order.status === "Keuken PreDone") {
+                                    newStatus = "Finished";
+                                } else {
+                                    // Geen update nodig, bar is al klaar
+                                    console.log("Bar al afgehandeld, geen update nodig.", newStatus);
+                                    setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
+                                    setCompletedOrders(prev => [...prev, order]);
+                                    return;
+                                }
+
+                                console.log("Nieuwe status: ", newStatus);
                                 setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
                                 setCompletedOrders(prev => [...prev, order]);
+
                                 axios.put(
                                     `https://localhost:7117/api/Order/${order.orderId}/status`,
-                                    `"Finished"`,
+                                    JSON.stringify(newStatus),
                                     {
                                         headers: {
                                             'Content-Type': 'application/json'

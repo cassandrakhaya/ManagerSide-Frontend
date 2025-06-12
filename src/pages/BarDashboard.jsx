@@ -79,7 +79,11 @@ const BarDashboard = () => {
                                 item.dish.categories &&
                                 item.dish.categories.some(cat => cat.categoryId === 3) &&
                                 order.status !== "Done" &&
-                                order.status !== "Finished"
+                                order.status !== "Finished" &&
+                                order.status !== "Bar Done" &&
+                                order.status !== "Bar PreDone" &&
+                                order.status !== "Bar Finished" &&
+                                order.status !== "Keuken PreDone"
                             )
                             .map(item => ({
                                 name: item.dish?.name || "Onbekend gerecht",
@@ -90,6 +94,7 @@ const BarDashboard = () => {
                         return {
                             tableId: order.tableId,
                             orderId: order.orderId,
+                            status: order.status,
                             time: order.orderTime.substring(0, 5),
                             items: filteredItems
                         };
@@ -131,13 +136,30 @@ const BarDashboard = () => {
                                         prevOrders.map((o) => o.orderId === updatedOrder.orderId ? updatedOrder : o)
                                     );
                                 }}
-                                onComplete={() => {
+                                onComplete={async () => {
+                                    await getData();
+                                    let newStatus = order.status;
+
+                                    if (order.status === "Pending" || order.status === "Waiting") {
+                                        newStatus = "Bar Done";
+                                    } else if (order.status === "Keuken Done") {
+                                        newStatus = "Done";
+                                    } else if (order.status === "Keuken Finished") {
+                                        newStatus = "Bar PreDone";
+                                    } else {
+                                        // Geen update nodig, bar is al klaar
+                                        console.log("Bar al afgehandeld, geen update nodig.", newStatus);
+                                        setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
+                                        setCompletedOrders(prev => [...prev, order]);
+                                        return;
+                                    }
+                                    console.log("Nieuwe status: ", newStatus);
                                     setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
                                     setCompletedOrders(prev => [...prev, order]);
 
                                     axios.put(
                                         `https://localhost:7117/api/Order/${order.orderId}/status`,
-                                        "Done",
+                                        JSON.stringify(newStatus),
                                         {
                                             headers: {
                                                 'Content-Type': 'application/json'
@@ -166,14 +188,43 @@ const BarDashboard = () => {
                                 </li>
                             ))}
                     </ul>
-
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             if (completedOrders.length === 0) return;
 
                             const lastCompleted = completedOrders[completedOrders.length - 1];
-                            const resetItems = lastCompleted.items.map(item => ({ ...item, status: "waiting" }));
-                            const restoredOrder = { ...lastCompleted, items: resetItems };
+
+                            await getData();
+                            let newStatus = null;
+
+                            switch (lastCompleted.status) {
+                                case "Bar Done":
+                                case "Pending":
+                                case "Waiting":
+                                    newStatus = "Waiting";
+                                    break;
+                                case "Bar PreDone":
+                                    newStatus = "Keuken Finished";
+                                    break;
+                                case "Done":
+                                    newStatus = "Keuken Done";
+                                    break;
+                                case "Finished":
+                                    newStatus = "Keuken Finished";
+                                    break;
+                                case "Keuken PreDone":
+                                    newStatus = "Keuken Done";
+                                    break;
+                                case "Bar Finished":
+                                    newStatus = "Waiting";
+                                    break;
+                                default:
+                                    console.log("Kan bar-status niet terugzetten voor status:", lastCompleted.status);
+                                    return;
+                            }
+
+                            const resetItems = lastCompleted.items.map(item => ({...item, status: "waiting"}));
+                            const restoredOrder = {...lastCompleted, items: resetItems, status: newStatus};
 
                             setOrders(prev => {
                                 const updated = [...prev, restoredOrder];
@@ -185,14 +236,14 @@ const BarDashboard = () => {
 
                             axios.put(
                                 `https://localhost:7117/api/Order/${lastCompleted.orderId}/status`,
-                                "Waiting",
+                                JSON.stringify(newStatus),
                                 {
                                     headers: {
                                         'Content-Type': 'application/json'
                                     }
                                 }
                             ).then(response => {
-                                console.log("Status succesvol teruggezet naar Waiting:", response.data);
+                                console.log("Bar-status succesvol teruggezet naar:", newStatus);
                             }).catch(error => {
                                 console.error("Fout bij terugzetten status:", error);
                             });

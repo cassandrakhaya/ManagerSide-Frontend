@@ -78,7 +78,11 @@ const KitchenDashboard = () => {
                             item.dish.categories &&
                             !item.dish.categories.some(cat => cat.categoryId === 3) &&
                             order.status !== "Done" &&
-                            order.status !== "Finished"
+                            order.status !== "Finished" &&
+                            order.status !== "Keuken Done" &&
+                            order.status !== "Keuken PreDone" &&
+                            order.status !== "Keuken Finished" &&
+                            order.status !== "Bar PreDone"
                         )
                         .map(item => ({
                             name: item.dish?.name || "Onbekend gerecht",
@@ -89,6 +93,7 @@ const KitchenDashboard = () => {
                     return {
                         orderId: order.orderId,
                         tableId: order.tableId,
+                        status: order.status,
                         time: order.orderTime.substring(0, 5),
                         items: filteredItems
                     };
@@ -129,12 +134,30 @@ const KitchenDashboard = () => {
                                     prevOrders.map((o) => o.orderId === updatedOrder.orderId ? updatedOrder : o)
                                 );
                             }}
-                            onComplete={() => {
+                            onComplete={async () => {
+                                await getData();
+                                let newStatus = order.status;
+
+                                if (order.status === "Pending" || order.status === "Waiting") {
+                                    newStatus = "Keuken Done";
+                                } else if (order.status === "Bar Done") {
+                                    newStatus = "Done";
+                                } else if (order.status === "Bar Finished") {
+                                    newStatus = "Keuken PreDone";
+                                } else {
+                                    // Geen update nodig, bar is al klaar
+                                    console.log("Keuken al afgehandeld, geen update nodig.", newStatus);
+                                    setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
+                                    setCompletedOrders(prev => [...prev, order]);
+                                    return;
+                                }
+                                console.log("Nieuwe status: ", newStatus);
                                 setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
                                 setCompletedOrders(prev => [...prev, order]);
+
                                 axios.put(
                                     `https://localhost:7117/api/Order/${order.orderId}/status`,
-                                    "Done",
+                                    JSON.stringify(newStatus),
                                     {
                                         headers: {
                                             'Content-Type': 'application/json'
@@ -165,12 +188,42 @@ const KitchenDashboard = () => {
                 </ul>
 
                 <button
-                    onClick={() => {
+                    onClick={async () => {
                         if (completedOrders.length === 0) return;
 
                         const lastCompleted = completedOrders[completedOrders.length - 1];
-                        const resetItems = lastCompleted.items.map(item => ({ ...item, status: "waiting" }));
-                        const restoredOrder = { ...lastCompleted, items: resetItems };
+
+                        await getData();
+                        let newStatus = null;
+
+                        switch (lastCompleted.status) {
+                            case "Keuken Done":
+                            case "Pending":
+                            case "Waiting":
+                                newStatus = "Waiting";
+                                break;
+                            case "Keuken PreDone":
+                                newStatus = "Bar Finished";
+                                break;
+                            case "Done":
+                                newStatus = "Bar Done";
+                                break;
+                            case "Finished":
+                                newStatus = "Bar Finished";
+                                break;
+                            case "Bar PreDone":
+                                newStatus = "Bar Done";
+                                break;
+                            case "Keuken Finished":
+                                newStatus = "Waiting";
+                                break;
+                            default:
+                                console.log("Kan bar-status niet terugzetten voor status:", lastCompleted.status);
+                                return;
+                        }
+
+                        const resetItems = lastCompleted.items.map(item => ({...item, status: "waiting"}));
+                        const restoredOrder = {...lastCompleted, items: resetItems};
 
                         setOrders(prev => {
                             const updated = [...prev, restoredOrder];
