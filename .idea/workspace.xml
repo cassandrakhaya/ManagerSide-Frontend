@@ -9,9 +9,6 @@
       <change beforePath="$PROJECT_DIR$/src/components/OrderCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCard.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/OrderCardBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCardBar.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/OrderCardBediening.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCardBediening.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/BarDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/BarDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/KitchenDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/KitchenDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +66,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1749195883624</updated>
-      <workItem from="1749195884688" duration="39514000" />
+      <workItem from="1749195884688" duration="40723000" />
     </task>
     <task id="LOCAL-00001" summary="Bediening frontend werkend met bug">
       <option name="closed" value="true" />
@@ -95,7 +92,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749732102395</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Terug fuseren van bar en keuken werkt in logica en pagina updaten is ook gefixt dat de bestelling niet meer terug komt. Terug haal knop bevat wel nog een aantal bugs.">
+      <option name="closed" value="true" />
+      <created>1749816900573</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749816900573</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,7 +113,8 @@
     <MESSAGE value="Bediening frontend werkend met bug" />
     <MESSAGE value="Overige files ook nog" />
     <MESSAGE value="Status transitions and filtering logic updated across dashboards." />
-    <option name="LAST_COMMIT_MESSAGE" value="Status transitions and filtering logic updated across dashboards." />
+    <MESSAGE value="Terug fuseren van bar en keuken werkt in logica en pagina updaten is ook gefixt dat de bestelling niet meer terug komt. Terug haal knop bevat wel nog een aantal bugs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Terug fuseren van bar en keuken werkt in logica en pagina updaten is ook gefixt dat de bestelling niet meer terug komt. Terug haal knop bevat wel nog een aantal bugs." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
