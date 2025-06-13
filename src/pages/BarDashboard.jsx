@@ -22,6 +22,11 @@ const BarDashboard = () => {
     
       connection.on('ReceiveOrder', (order) => {
         console.log('Nieuwe order ontvangen via SignalR:', order);
+
+          if (order.status === "Finished" || order.status === "Bar Finished" || order.status === "Keuken PreDone" || order.status === "Done") {
+              setOrders(prev => prev.filter(o => o.orderId !== order.orderId));
+              return;
+          }
     
         const filteredItems = order.orderItems
     .filter(item =>
@@ -40,15 +45,23 @@ const BarDashboard = () => {
   const newOrder = {
     tableId: order.tableId,
     orderId: order.orderId,
+      status: order.status,
     time: order.orderTime.substring(0, 5),
     items: filteredItems
   };
 
-  setOrders(prev => {
-    const updated = [...prev, newOrder];
-    updated.sort((a, b) => a.time.localeCompare(b.time));
-    return updated;
-  });
+          setOrders(prev => {
+              const exists = prev.some(o => o.orderId === newOrder.orderId);
+              if (exists) {
+                  return prev.map(o =>
+                      o.orderId === newOrder.orderId ? newOrder : o
+                  );
+              } else {
+                  const updated = [...prev, newOrder];
+                  updated.sort((a, b) => a.time.localeCompare(b.time));
+                  return updated;
+              }
+          });
 });
     
       // Start de verbinding
@@ -69,7 +82,7 @@ const BarDashboard = () => {
 
         const getData = async () => {
             try {
-                const result = await axios.get("/api/Order/all-orders");
+                const result = await axios.get("https://localhost:7117/api/Order/all-orders");
 
                 const ordersWithItems = result.data
                     .map(order => {
@@ -137,7 +150,6 @@ const BarDashboard = () => {
                                     );
                                 }}
                                 onComplete={async () => {
-                                    await getData();
                                     let newStatus = order.status;
 
                                     if (order.status === "Pending" || order.status === "Waiting") {
@@ -154,8 +166,6 @@ const BarDashboard = () => {
                                         return;
                                     }
                                     console.log("Nieuwe status: ", newStatus);
-                                    setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
-                                    setCompletedOrders(prev => [...prev, order]);
 
                                     axios.put(
                                         `https://localhost:7117/api/Order/${order.orderId}/status`,
@@ -167,6 +177,8 @@ const BarDashboard = () => {
                                         }
                                     ).then(response => {
                                         console.log("Status succesvol aangepast:", response.data);
+                                        setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
+                                        setCompletedOrders(prev => [...prev, order]);
                                     }).catch(error => {
                                         console.error("Fout bij aanpassen status:", error);
                                     });

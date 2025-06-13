@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="a9a67dc4-01a0-4f2e-8829-c6daf4a37649" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/OrderCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/OrderCardBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCardBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/OrderCardBediening.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCardBediening.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/BarDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/BarDashboard.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/KitchenDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/KitchenDashboard.jsx" afterDir="false" />
@@ -66,7 +69,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1749195883624</updated>
-      <workItem from="1749195884688" duration="20967000" />
+      <workItem from="1749195884688" duration="39514000" />
     </task>
     <task id="LOCAL-00001" summary="Bediening frontend werkend met bug">
       <option name="closed" value="true" />
@@ -84,7 +87,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749719658481</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Status transitions and filtering logic updated across dashboards.">
+      <option name="closed" value="true" />
+      <created>1749732102395</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749732102395</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -96,7 +107,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Bediening frontend werkend met bug" />
     <MESSAGE value="Overige files ook nog" />
-    <option name="LAST_COMMIT_MESSAGE" value="Overige files ook nog" />
+    <MESSAGE value="Status transitions and filtering logic updated across dashboards." />
+    <option name="LAST_COMMIT_MESSAGE" value="Status transitions and filtering logic updated across dashboards." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
