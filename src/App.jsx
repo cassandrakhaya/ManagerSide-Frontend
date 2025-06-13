@@ -1,26 +1,27 @@
-// import logo from './lonpm go.svg';
+// src/App.jsx
 import React from 'react';
-
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from './components/Navbar';
+import SubToolbar from './components/SubToolbar';
 import MenuEditStartPage from './pages/MenuEditStartPage.jsx';
-// import Home from "./pages/Home";
 import MenuPage from './pages/MenuPage';
-// import MenuStartPage from './components/MenuStartPage';
+import KitchenDashboard from './pages/KitchenDashboard';
+import BarDashboard from './pages/BarDashboard';
+import BedieningDashboard from "./pages/BedieningDashboard.jsx";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* <Route path= "/" element ={<Navbar/>}> */}
-        {/* <Route [a] element={<Home/>} /> */}
-        <Route path = '/' element ={<MenuEditStartPage/>} />
-        <Route path= '/Menu/:category' element={<MenuPage/>} />
-        </Routes>
+        <Route path='/' element={<MenuEditStartPage />} />
+        <Route path='/Menu/:category' element={<MenuPage />} />
+        <Route path='/keuken' element={<KitchenDashboard />} />
+        <Route path='/bar' element={<BarDashboard />} />
+          <Route path='/bediening' element={<BedieningDashboard />} />
+      </Routes>
     </Router>
-    
   );
-}
-
+};
 
 export default App;

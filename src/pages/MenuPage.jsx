@@ -17,6 +17,7 @@ const MenuForm = () => {
 
     return (
         <div className="post-form">
+        
             <h2>Product Details</h2>
             <input
                 type="text"
@@ -29,7 +30,7 @@ const MenuForm = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
             />
-            <button onClick={handleMenu}>Save</button>
+            <button onClick={handleMenu}>Opslaan</button>
         </div>
     );
 };

@@ -1,10 +1,23 @@
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react-swc'
+import fs from 'fs';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-  ],
-})
+  plugins: [react(), tailwindcss()],
+  server: {
+    https: {
+      key: fs.readFileSync('./localhost-key.pem'),
+      cert: fs.readFileSync('./localhost.pem'),
+    },
+    port: 50623,
+    proxy: {
+      '^/api/': {
+        target: 'https://localhost:7117',
+        secure: false,
+        changeOrigin: true,
+        ws: true,
+      }
+    }
+  }
+});
