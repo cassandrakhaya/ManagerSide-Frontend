@@ -19,6 +19,11 @@ const BedieningDashboard = () => {
     };
 
     const handleShowSwitch = () => setShowSwitch(true);
+
+    const handleReset = () => {
+        setSelectedTable(null);
+        setNewTable(null);
+    };
     
 
 
@@ -277,14 +282,13 @@ const BedieningDashboard = () => {
                         className="bg-white rounded-lg shadow-xl p-6 w-full max-w-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h2 className="text-xl font-semibold mb-4">Tafel wisselen</h2>
-
-                        {/* Toon huidige selectie */}
-                        {selectedTable !== null && newTable !== null && (
-                            <div className="text-center mb-4 font-medium text-lg">
-                                Tafel {selectedTable} → Tafel {newTable}
-                            </div>
-                        )}
+                        <h2 className="text-xl font-semibold mb-4 text-center">
+                            {selectedTable && newTable
+                                ? `Tafel ${selectedTable} → Tafel ${newTable}`
+                                : selectedTable
+                                    ? `Tafel ${selectedTable} →`
+                                    : 'Selecteer de tafel wijziging'}
+                        </h2>
 
                         {/* Tafeloverzicht */}
                         <div className="grid grid-cols-5 gap-4 justify-items-center mb-6">
@@ -320,6 +324,12 @@ const BedieningDashboard = () => {
 
                         {/* Knoppen */}
                         <div className="flex justify-end mt-4 space-x-2">
+                            <button
+                                onClick={handleReset}
+                                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
+                            >
+                                Reset
+                            </button>
                             <button
                                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                                 onClick={() => {
