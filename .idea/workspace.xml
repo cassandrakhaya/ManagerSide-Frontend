@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="a9a67dc4-01a0-4f2e-8829-c6daf4a37649" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/OrderCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/OrderCardBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCardBar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/OrderCardBediening.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderCardBediening.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,29 +16,34 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/kok-bestellingen" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "TimMannn"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;TimMannn&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/cassandrakhaya/ManagerSide-Frontend.git",
-    "accountId": "f07eec20-ba1d-447f-9487-fd3ca24e79e5"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/cassandrakhaya/ManagerSide-Frontend.git&quot;,
+    &quot;accountId&quot;: &quot;f07eec20-ba1d-447f-9487-fd3ca24e79e5&quot;
   }
-}]]></component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2y7qJ1miMqPY2Dxa50Geh1TaaOd" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -49,7 +54,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#4 on feature/kok-bestellingen",
+    "git-widget-placeholder": "feature/kok-bestellingen-tafel-switch",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -66,7 +71,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1749195883624</updated>
-      <workItem from="1749195884688" duration="40723000" />
+      <workItem from="1749195884688" duration="43912000" />
+      <workItem from="1750245244071" duration="4028000" />
     </task>
     <task id="LOCAL-00001" summary="Bediening frontend werkend met bug">
       <option name="closed" value="true" />
@@ -100,7 +106,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749816900573</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Tafel nummers weer aan gezet in plaats van de status weergaven.">
+      <option name="closed" value="true" />
+      <created>1749817962260</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749817962260</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,7 +128,8 @@
     <MESSAGE value="Overige files ook nog" />
     <MESSAGE value="Status transitions and filtering logic updated across dashboards." />
     <MESSAGE value="Terug fuseren van bar en keuken werkt in logica en pagina updaten is ook gefixt dat de bestelling niet meer terug komt. Terug haal knop bevat wel nog een aantal bugs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Terug fuseren van bar en keuken werkt in logica en pagina updaten is ook gefixt dat de bestelling niet meer terug komt. Terug haal knop bevat wel nog een aantal bugs." />
+    <MESSAGE value="Tafel nummers weer aan gezet in plaats van de status weergaven." />
+    <option name="LAST_COMMIT_MESSAGE" value="Tafel nummers weer aan gezet in plaats van de status weergaven." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

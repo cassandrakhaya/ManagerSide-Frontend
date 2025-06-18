@@ -9,6 +9,19 @@ const BedieningDashboard = () => {
     const [completedOrders, setCompletedOrders] = useState([]);
     const [connection, setConnection] = useState(null);
 
+    const [selectedTable, setSelectedTable] = useState(null);
+    const [newTable, setNewTable] = useState(null);
+    const [showSwitch, setShowSwitch] = useState(false);
+    const handleCloseSwitch = () => {
+        setShowSwitch(false);
+        setSelectedTable(null);
+        setNewTable(null);
+    };
+
+    const handleShowSwitch = () => setShowSwitch(true);
+    
+
+
     useEffect(() => {
         getData();
     }, []);
@@ -42,7 +55,6 @@ const BedieningDashboard = () => {
                 quantity: item.quantity,
                 status: "done"
             }));
-
 
             if (filteredItems.length === 0) return;
 
@@ -80,7 +92,6 @@ const BedieningDashboard = () => {
             connection.stop().then(() => console.log('SignalR verbinding gestopt.'));
         };
     }, []);
-
 
     const getData = async () => {
         try {
@@ -136,11 +147,17 @@ const BedieningDashboard = () => {
         setDoneItems(itemsCount);
     }, [orders]);
 
+    const handleSave = (fromTable, toTable) => {
+        console.log(`Verplaatsen van tafel ${fromTable} naar tafel ${toTable}`);
+        // hier komt jouw logica
+    };
+
     return (
-        <div className="flex h-screen bg-[#F5F5F5]">
+        <div className="flex h-screen bg-[#F5F5F5] relative">
             <div className="w-full p-6 overflow-y-auto">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Bedieningoverzicht</h1>
+                    <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={handleShowSwitch}>Tafel wisselen</button>
                     <button
                         onClick={async () => {
                             if (completedOrders.length === 0) return;
@@ -221,7 +238,6 @@ const BedieningDashboard = () => {
                                 } else if (order.status === "Bar PreDone" || order.status === "Keuken PreDone") {
                                     newStatus = "Finished";
                                 } else {
-                                    // Geen update nodig, bar is al klaar
                                     console.log("Bar al afgehandeld, geen update nodig.", newStatus);
                                     setOrders(prevOrders => prevOrders.filter(o => o.orderId !== order.orderId));
                                     setCompletedOrders(prev => [...prev, order]);
@@ -250,6 +266,93 @@ const BedieningDashboard = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Tailwind Modal */}
+            {showSwitch && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/50"
+                    onClick={handleCloseSwitch}
+                >
+                    <div
+                        className="bg-white rounded-lg shadow-xl p-6 w-full max-w-xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h2 className="text-xl font-semibold mb-4">Tafel wisselen</h2>
+
+                        {/* Toon huidige selectie */}
+                        {selectedTable !== null && newTable !== null && (
+                            <div className="text-center mb-4 font-medium text-lg">
+                                Tafel {selectedTable} → Tafel {newTable}
+                            </div>
+                        )}
+
+                        {/* Tafeloverzicht */}
+                        <div className="grid grid-cols-5 gap-4 justify-items-center mb-6">
+                            {[...Array(10)].map((_, i) => {
+                                const tableNumber = i + 1;
+                                const isSelected = tableNumber === selectedTable;
+                                const isNew = tableNumber === newTable;
+
+                                return (
+                                    <button
+                                        key={tableNumber}
+                                        className={`w-16 h-16 flex items-center justify-center rounded-full border-2 text-lg font-semibold
+                                ${
+                                            isNew
+                                                ? 'bg-green-500 text-white border-green-700'
+                                                : isSelected
+                                                    ? 'bg-blue-500 text-white border-blue-700'
+                                                    : 'bg-gray-100 text-black border-gray-300 hover:bg-gray-200'
+                                        }`}
+                                        onClick={() => {
+                                            if (selectedTable === null) {
+                                                setSelectedTable(tableNumber);
+                                            } else if (selectedTable !== tableNumber) {
+                                                setNewTable(tableNumber);
+                                            }
+                                        }}
+                                    >
+                                        {tableNumber}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Knoppen */}
+                        <div className="flex justify-end mt-4 space-x-2">
+                            <button
+                                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                                onClick={() => {
+                                    // reset selectie bij annuleren
+                                    setSelectedTable(null);
+                                    setNewTable(null);
+                                    handleCloseSwitch();
+                                }}
+                            >
+                                Annuleer
+                            </button>
+                            <button
+                                className={`px-4 py-2 text-white rounded ${
+                                    selectedTable && newTable
+                                        ? 'bg-green-500 hover:bg-green-400'
+                                        : 'bg-green-200 cursor-not-allowed'
+                                }`}
+                                onClick={() => {
+                                    if (selectedTable && newTable) {
+                                        handleSave(selectedTable, newTable);
+                                        setSelectedTable(null);
+                                        setNewTable(null);
+                                        handleCloseSwitch();
+                                    }
+                                }}
+                                disabled={!selectedTable || !newTable}
+                            >
+                                Opslaan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
