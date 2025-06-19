@@ -175,64 +175,66 @@ const BedieningDashboard = () => {
     return (
         <div className="flex h-screen bg-[#F5F5F5] relative">
             <div className="w-full p-6 overflow-y-auto">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold">Bedieningoverzicht</h1>
-                    <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={handleShowSwitch}>Tafel wisselen</button>
-                    <button
-                        onClick={async () => {
-                            if (completedOrders.length === 0) return;
+                    <div className="flex gap-2">
+                        <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={handleShowSwitch}>Tafel wisselen</button>
+                        <button
+                            onClick={async () => {
+                                if (completedOrders.length === 0) return;
 
-                            const lastCompleted = completedOrders[completedOrders.length - 1];
+                                const lastCompleted = completedOrders[completedOrders.length - 1];
 
-                            await getData();
-                            let newStatus = null;
+                                await getData();
+                                let newStatus = null;
 
-                            switch (lastCompleted.status) {
-                                case "Finished":
-                                case "Bar PreDone":
-                                case "Keuken PreDone":
-                                    newStatus = "Done";
-                                    break;
-                                case "Bar Finished":
-                                    newStatus = "Bar Done";
-                                    break;
-                                case "Keuken Finished":
-                                    newStatus = "Keuken Done";
-                                    break;
-                                default:
-                                    console.log("Kan bediening-status niet terugzetten voor status:", lastCompleted.status);
-                                    return;
-                            }
-
-                            const resetItems = lastCompleted.items.map(item => ({...item, status: "done"}));
-                            const restoredOrder = {...lastCompleted, items: resetItems};
-
-                            setOrders(prev => {
-                                const updated = [...prev, restoredOrder];
-                                updated.sort((a, b) => a.time.localeCompare(b.time));
-                                return updated;
-                            });
-
-                            setCompletedOrders(prev => prev.slice(0, -1));
-
-                            axios.put(
-                                `https://localhost:7117/api/Order/${lastCompleted.orderId}/status`,
-                                `"Done"`,
-                                {
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    }
+                                switch (lastCompleted.status) {
+                                    case "Finished":
+                                    case "Bar PreDone":
+                                    case "Keuken PreDone":
+                                        newStatus = "Done";
+                                        break;
+                                    case "Bar Finished":
+                                        newStatus = "Bar Done";
+                                        break;
+                                    case "Keuken Finished":
+                                        newStatus = "Keuken Done";
+                                        break;
+                                    default:
+                                        console.log("Kan bediening-status niet terugzetten voor status:", lastCompleted.status);
+                                        return;
                                 }
-                            ).then(response => {
-                                console.log("Status succesvol teruggezet naar Done:", response.data);
-                            }).catch(error => {
-                                console.error("Fout bij terugzetten status:", error);
-                            });
-                        }}
-                        className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
-                    >
-                        Bestelling terughalen
-                    </button>
+
+                                const resetItems = lastCompleted.items.map(item => ({...item, status: "done"}));
+                                const restoredOrder = {...lastCompleted, items: resetItems};
+
+                                setOrders(prev => {
+                                    const updated = [...prev, restoredOrder];
+                                    updated.sort((a, b) => a.time.localeCompare(b.time));
+                                    return updated;
+                                });
+
+                                setCompletedOrders(prev => prev.slice(0, -1));
+
+                                axios.put(
+                                    `https://localhost:7117/api/Order/${lastCompleted.orderId}/status`,
+                                    `"Done"`,
+                                    {
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        }
+                                    }
+                                ).then(response => {
+                                    console.log("Status succesvol teruggezet naar Done:", response.data);
+                                }).catch(error => {
+                                    console.error("Fout bij terugzetten status:", error);
+                                });
+                            }}
+                            className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+                        >
+                            Bestelling terughalen
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
