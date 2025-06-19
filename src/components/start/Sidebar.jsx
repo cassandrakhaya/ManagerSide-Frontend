@@ -1,6 +1,12 @@
 import React from 'react';
-import './Sidebar.css'
-const Sidebar = ({ menuItems, categories, selectedCategory, setSelectedCategory, setSelectedItem }) => {
+
+const Sidebar = ({
+  menuItems,
+  categories,
+  selectedCategory,
+  setSelectedCategory,
+  setSelectedItem,
+}) => {
   return (
     <div className="w-1/4 bg-white shadow-lg rounded-lg p-4">
       <select
@@ -19,21 +25,32 @@ const Sidebar = ({ menuItems, categories, selectedCategory, setSelectedCategory,
           setSelectedItem({
             name: '',
             price: '',
-            category: selectedCategory,
-            description: ''
+            category: selectedCategory === 'All' ? '' : selectedCategory,
+            description: '',
+            categories: [],
+            allergies: [],
+            status: true
+            // imageUrl: ''
           })
         }
       >
         Nieuw product
       </button>
 
-      <h2 className="text-lg font-semibold mb-2">{selectedCategory.toUpperCase()}</h2>
+      <h2 className="text-lg font-semibold mb-2">{selectedCategory?.toUpperCase()}</h2>
       <ul>
         {menuItems
-          .filter(item => selectedCategory === "All" || item.category === selectedCategory)
+          .filter(item =>
+            selectedCategory === "All" ||
+            (item.categories && item.categories.some(cat =>
+              typeof cat === "string"
+                ? cat === selectedCategory
+                : cat.name === selectedCategory
+            ))
+          )
           .map(item => (
             <li
-              key={item.id}
+              key={item.dishID || item.id}
               className="p-2 border-b cursor-pointer hover:bg-gray-100"
               onClick={() => setSelectedItem(item)}
             >

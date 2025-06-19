@@ -17,8 +17,7 @@ const MenuForm = () => {
 
     return (
         <div className="post-form">
-        
-            <h2>Product Details</h2>
+            <h2>Product Beschrijving</h2>
             <input
                 type="text"
                 placeholder="Enter name"
