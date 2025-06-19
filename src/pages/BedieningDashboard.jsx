@@ -3,6 +3,7 @@ import OrderCardBediening from "../components/OrderCardBediening";
 import axios from 'axios';
 import * as signalR from '@microsoft/signalr';
 
+
 const BedieningDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [doneItems, setDoneItems] = useState({});
@@ -152,9 +153,23 @@ const BedieningDashboard = () => {
         setDoneItems(itemsCount);
     }, [orders]);
 
-    const handleSave = (fromTable, toTable) => {
-        console.log(`Verplaatsen van tafel ${fromTable} naar tafel ${toTable}`);
-        // hier komt jouw logica
+    const handleSave = async (fromTable, toTable) => {
+        try {
+            const response = await axios.post(
+                `https://localhost:7117/api/tables/move-orders/${fromTable}`,
+                toTable,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            console.log(`Succesvol bestelling(en) verplaatst van tafel ${fromTable} naar tafel ${toTable}`, response.data);
+            await getData();
+            handleCloseSwitch();
+        } catch (error) {
+            console.error(`Fout bij verplaatsen van tafel ${fromTable} naar ${toTable}:`, error);
+        }
     };
 
     return (

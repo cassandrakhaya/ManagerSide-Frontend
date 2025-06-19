@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a9a67dc4-01a0-4f2e-8829-c6daf4a37649" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/BedieningDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +72,7 @@
       <option name="presentableId" value="Default" />
       <updated>1749195883624</updated>
       <workItem from="1749195884688" duration="43912000" />
-      <workItem from="1750245244071" duration="4867000" />
+      <workItem from="1750245244071" duration="8251000" />
     </task>
     <task id="LOCAL-00001" summary="Bediening frontend werkend met bug">
       <option name="closed" value="true" />
@@ -120,7 +122,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750250043997</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Pop-up mooier en duidelijker gemaakt">
+      <option name="closed" value="true" />
+      <created>1750250845305</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1750250845305</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -136,7 +146,8 @@
     <MESSAGE value="Terug fuseren van bar en keuken werkt in logica en pagina updaten is ook gefixt dat de bestelling niet meer terug komt. Terug haal knop bevat wel nog een aantal bugs." />
     <MESSAGE value="Tafel nummers weer aan gezet in plaats van de status weergaven." />
     <MESSAGE value="Tafel switch pop-up (zonder werkende handleSave" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tafel switch pop-up (zonder werkende handleSave" />
+    <MESSAGE value="Pop-up mooier en duidelijker gemaakt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pop-up mooier en duidelijker gemaakt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
