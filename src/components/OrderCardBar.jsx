@@ -16,8 +16,6 @@ const OrderCardBar = ({ order, onUpdate, onComplete }) => {
     switch (status) {
       case "waiting":
         return "border-red-500";
-      case "inProgress":
-        return "border-yellow-400";
       case "done":
         return "border-green-500";
       default:
@@ -50,12 +48,6 @@ const OrderCardBar = ({ order, onUpdate, onComplete }) => {
                         onClick={() => updateStatus(index, "waiting")}
                     >
                       Wacht
-                    </button>
-                    <button
-                        className={`px-4 py-2 rounded ${item.status === "inProgress" ? "bg-yellow-400 text-white" : "bg-gray-200"}`}
-                        onClick={() => updateStatus(index, "inProgress")}
-                    >
-                      Bezig
                     </button>
                     <button
                         className={`px-4 py-2 rounded ${item.status === "done" ? "bg-green-500 text-white" : "bg-gray-200"}`}

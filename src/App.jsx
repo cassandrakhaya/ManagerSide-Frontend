@@ -8,6 +8,7 @@ import MenuEditStartPage from './pages/MenuEditStartPage.jsx';
 import MenuPage from './pages/MenuPage';
 import KitchenDashboard from './pages/KitchenDashboard';
 import BarDashboard from './pages/BarDashboard';
+import BedieningDashboard from "./pages/BedieningDashboard.jsx";
 
 // ✅ Toastify imports
 import { ToastContainer } from 'react-toastify';
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/Menu/:category" element={<MenuPage />} />
         <Route path='/keuken' element={<KitchenDashboard />} />
         <Route path='/bar' element={<BarDashboard />} />
+          <Route path='/bediening' element={<BedieningDashboard />} />
       </Routes>
 
       {/* ✅ ToastContainer toevoegen */}
